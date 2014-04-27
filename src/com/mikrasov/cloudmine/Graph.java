@@ -39,8 +39,8 @@ public class Graph {
 		int newSize = size +1;
 		Graph graph = new Graph(newSize);
 		
-		for(int i=0; i < newSize; i++) {
-			for(int j=0; j < newSize; j++) {
+		for(int i=0; i < size; i++) {
+			for(int j=0; j < size; j++) {
 				graph.set(i, j, get(i,j));
 			}
 		}
@@ -96,12 +96,25 @@ public class Graph {
 	     }
 	    return count;
 	}
+	
+	public static Graph generateRandom(int size){
+		Graph g = new Graph(size);
+		
+		for(int i=0; i < size; i++) {
+			for(int j=0; j < size; j++) {
+				if(Math.random() < 0.5) 
+					g.set(i,j, true);
+			}
+		}
+		
+		return g;
+	}
 
 	public String asJSON(){
 		String out ="";
 		for(int i=0; i < size; i++) {
 			for(int j=0; j < size; j++) {
-				out+=  get(i,j)?1:0 +" ";
+				out+=  get(i,j)?1:0 ;
 			}
 		}
 		return out;
@@ -113,7 +126,7 @@ public class Graph {
 		for(int i=0; i < size; i++) {
 			for(int j=0; j < size; j++)
 			{
-				out+=  get(i,j)?1:0 +" ";
+				out+=  (get(i,j)?1:0) +" ";
 			}
 			out += "\n";
 		}
