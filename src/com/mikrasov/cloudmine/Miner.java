@@ -6,7 +6,7 @@ public class Miner {
 		// TODO Auto-generated constructor stub
 	}
 
-	public void graph(){
+	public void mine(){
 
 		//start with graph size 8
 		Graph g = new Graph(8);
@@ -92,6 +92,11 @@ public class Miner {
 					);
 			// rinse and repeat
 		}
+	}
+	
+	public static void main(String[] args) {
+		Miner miner = new Miner();
+		miner.mine();
 	}
 
 }
