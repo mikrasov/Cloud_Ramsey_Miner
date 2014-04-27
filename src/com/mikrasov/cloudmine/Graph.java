@@ -96,6 +96,16 @@ public class Graph {
 	     }
 	    return count;
 	}
+
+	public String asJSON(){
+		String out ="";
+		for(int i=0; i < size; i++) {
+			for(int j=0; j < size; j++) {
+				out+=  get(i,j)?1:0 +" ";
+			}
+		}
+		return out;
+	}
 	
 	@Override
 	public String toString() {		
@@ -103,11 +113,10 @@ public class Graph {
 		for(int i=0; i < size; i++) {
 			for(int j=0; j < size; j++)
 			{
-				out+=  get(i,j) +" ";
+				out+=  get(i,j)?1:0 +" ";
 			}
 			out += "\n";
 		}
 		return out;
 	}
-	
 }
