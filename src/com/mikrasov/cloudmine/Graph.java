@@ -1,15 +1,19 @@
 package com.mikrasov.cloudmine;
 
+import java.io.Serializable;
 import java.util.BitSet;
 import java.util.Random;
 
 
-public class Graph {
+public class Graph implements Comparable<Graph>, Serializable{
+	
+	private static final long serialVersionUID = 5253025260499448857L;
+	
 	private static final int SUB_GRAPH_SIZE = 6;
 	private static final Random rnd = new Random();
 	
-	private BitSet [ ] rows;
-	private int size; 
+	private BitSet matrix;
+	private final int size; 
 	
 	/**
 	 * Create new matrix based Graph representation (zero filled)
@@ -17,9 +21,7 @@ public class Graph {
 	 */
 	public Graph (int size) {
 		this.size = size;
-		rows = new BitSet[size];
-		for (int i = 0; i < size; i++)
-			rows[i] = new  BitSet(size);
+		matrix = new BitSet(size*size);
 	}
 
 	/**
@@ -36,7 +38,9 @@ public class Graph {
 	 * @param col
 	 * @return value
 	 */
-	public boolean get(int row, int col) { return rows[row].get(col); }
+	public boolean get(int row, int col) { 
+		return matrix.get( (size*row)+col);
+	}
 
 	/**
 	 * Set value of edge
@@ -46,9 +50,9 @@ public class Graph {
 	 */
 	public void set(int row, int col, boolean value) { 
 		if(value)
-			rows[row].set(col);
+			matrix.set( (size*row)+col);
 		else
-			rows[row].clear(col);
+			matrix.clear( (size*row)+col);
 	}
 	
 	/**
@@ -57,7 +61,7 @@ public class Graph {
 	 * @param col
 	 */
 	public void flip(int row, int col) { 
-		rows[row].flip(col);
+		matrix.flip( (size*row)+col);
 	}
 	
 	/**
@@ -186,6 +190,16 @@ public class Graph {
 	}
 
 	/**
+	 * Checks to see if this graph is IsoMorph of another graph
+	 * @param o graph to check against
+	 * @return true if isomorph
+	 */
+	public boolean isIsomorphOf(Graph o){
+		//METHOD STUB
+		return this.equals(o);
+	}
+	
+	/**
 	 * Mirror upper triangular matrix, and encode it as a string
 	 * @return string
 	 */
@@ -193,13 +207,12 @@ public class Graph {
 		Graph graph = this.mirror();
 		
 		String out ="";
-		for(int row=0; row < size; row++) {
-			for(int col=0; col < size; col++) {
-				out+=  graph.get(row,col)?1:0 ;
-			}
+		for(int i=0; i < size*size; i++) {
+			out+=  graph.matrix.get(i)?1:0 ;
 		}
 		return out;
 	}
+	
 	
 	@Override
 	public String toString() {		
@@ -213,4 +226,37 @@ public class Graph {
 		}
 		return out;
 	}
+	
+	@Override
+	public boolean equals(Object obj) {
+		return matrix.equals( ((Graph)obj).matrix );
+	}
+
+	@Override
+	public int compareTo(Graph o) {
+		BitSet a = this.matrix;
+		BitSet b = o.matrix;
+		
+		if(a.equals(b)) {
+            return 0;
+        } else if(a.length() > b.length()) {
+            return 1;
+        } else if(b.length() > a.length()) {
+            return -1;
+        } else {
+            for(int i = 0; i < a.length(); i++) {
+               if(a.get(i) != b.get(i)) {
+                   if(a.get(i)) {
+                      return 1;
+                   } else {
+                      return -1;
+                   }
+                }
+             }
+             return 0;
+         }
+	}
+	
+	
+
 }
