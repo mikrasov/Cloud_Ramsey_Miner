@@ -1,4 +1,4 @@
-package com.mikrasov.cloudmine.http;
+package com.cloudmine.http;
 
 import java.io.BufferedReader;
 import java.io.DataOutputStream;

@@ -1,4 +1,4 @@
-package com.mikrasov.cloudmine.http;
+package com.cloudmine.http;
 
 import java.io.PrintStream;
 import java.net.InetSocketAddress;
@@ -18,6 +18,7 @@ import com.google.gson.Gson;
 
 public class AppServer implements Container {
 	
+	public static final String SERVER_IP = "localhost:8080";
 	
 	public static class Task implements Runnable {
 		  

@@ -1,4 +1,4 @@
-package com.mikrasov.cloudmine;
+package com.cloudmine;
 
 import java.util.HashSet;
 

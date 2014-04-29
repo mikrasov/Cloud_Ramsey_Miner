@@ -1,7 +1,7 @@
-package com.mikrasov.cloudmine.mine;
+package com.cloudmine.mine;
 
-import com.mikrasov.cloudmine.Graph;
-import com.mikrasov.cloudmine.TabooList;
+import com.cloudmine.Graph;
+import com.cloudmine.TabooList;
 
 public class ForwardMiner {
 	

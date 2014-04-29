@@ -1,7 +1,7 @@
-package com.mikrasov.cloudmine.mine;
+package com.cloudmine.mine;
 
-import com.mikrasov.cloudmine.http.AppClient;
-import com.mikrasov.cloudmine.http.AppServer;
+import com.cloudmine.http.AppClient;
+import com.cloudmine.http.AppServer;
 
 public abstract class Miner extends Thread{
 

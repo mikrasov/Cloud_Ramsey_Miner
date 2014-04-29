@@ -1,4 +1,4 @@
-package com.mikrasov.cloudmine.mine;
+package com.cloudmine.mine;
 
 import java.util.ArrayList;
 import java.util.List;
