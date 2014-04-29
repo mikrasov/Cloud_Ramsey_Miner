@@ -1,4 +1,4 @@
-package com.mudy;
+package com.mikrasov.cloudmine.http;
 
 import java.io.BufferedReader;
 import java.io.InputStreamReader;
@@ -9,18 +9,17 @@ import org.apache.http.HttpResponse;
 import org.apache.http.NameValuePair;
 import org.apache.http.client.HttpClient;
 import org.apache.http.client.entity.UrlEncodedFormEntity;
-import org.apache.http.client.methods.HttpGet;
 import org.apache.http.client.methods.HttpPost;
 import org.apache.http.impl.client.DefaultHttpClient;
 import org.apache.http.message.BasicNameValuePair;
 
-public class HttpClientExample {
+public class PRequest {
     
 	private final String USER_AGENT = "Mozilla/5.0";
     
 	public static void main(String[] args) throws Exception {
         
-		HttpClientExample http = new HttpClientExample();
+		PRequest http = new PRequest();
         
 		System.out.println("Send Http POST request");
 		http.sendPost();
