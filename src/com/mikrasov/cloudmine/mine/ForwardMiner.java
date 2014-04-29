@@ -1,34 +1,42 @@
-package com.mikrasov.cloudmine;
+package com.mikrasov.cloudmine.mine;
 
-public class Miner {
+import com.mikrasov.cloudmine.Graph;
+import com.mikrasov.cloudmine.TabooList;
+
+public class ForwardMiner {
 	
-	public void mine(){
-
-		//start with graph size 8
-		Graph g = Graph.generateRandom(8); //= Graph.generateRandom(8);
+	
+	public Graph buildUpFrom(Graph seed){
+		
+		Graph solution = findCounterExample(seed);
+		
+		while(solution.size() < 103){
+			
+			solution = solution.extendRandom();
+			findCounterExample(solution);
+			System.out.println(">>Counter-example found on "+solution.size()+"!\n"+solution);
+		}
+		
+		//Best Artifact
+		System.out.println("Found one!"+solution);
+		return solution;
+	}
+	
+	
+	public Graph findCounterExample(Graph g){
 		TabooList taboo = new TabooList();
-
-		// while we do not have a publishable result
-		while(g.size() < 80)
-		{
+		
+		while(true){
 			//find out how we are doing
 			int count = g.cliqueCount();
-
+	
 			//if we have a counter example
 			if(count == 0)
 			{
-				System.out.println(">>Counter-example found on "+g.size()+"!");
-	
-				//make a new graph one size bigger 
-				g = g.extendRandom();
-				
-				// reset the taboo list for the new graph
-				taboo = new TabooList();
-
-				// keep going
-				continue;
+				//YAY FOUND IT!
+				return g;
 			}
-
+	
 			/*
 			 * otherwise, we need to consider flipping an edge
 			 *
@@ -50,8 +58,11 @@ public class Miner {
 					// flip it
 					g.flip(i,j);
 					count = g.cliqueCount();
-
-					if(count == 0) break;
+	
+					if(count == 0){
+						//YAY FOUND IT!
+						return g;
+					}
 					
 					// is it better and the i,j,count not taboo?
 					if( count < best_count && !taboo.contains(i, j))
@@ -60,34 +71,28 @@ public class Miner {
 						best_i = i;
 						best_j = j;	
 					}
-
+	
 					//flip it back
 					g.flip(i,j);
 					
 				}
-				
-				if(count == 0) break;
 			}
-			
-			if(count == 0) continue;
-
+	
 			if(best_count == Integer.MAX_VALUE) {
-				System.out.println("no best edge found, terminating");
-				g.flipRandom();
-				continue;
+				System.out.println("no best edge found");
+				return null;
 			}
 			
 			// keep the best flip we saw
 			g.flip(best_i, best_j);
-
+	
 			/*
 			 * taboo this graph configuration so that we don't visit
 			 * it again
 			 */
 			count = g.cliqueCount();
 			taboo.add(best_i,best_j);
-//			FIFOInsertEdgeCount(taboo_list,best_i,best_j,count);
-
+	
 			System.out.println("size: "+g.size()+"\t"
 					+ "best_count: "+best_count+"\t"
 					+ "best edge: ("+best_i+","+best_j+")\t"
@@ -97,10 +102,11 @@ public class Miner {
 		}
 		
 	}
+
 	
 	public static void main(String[] args) {
-		Miner miner = new Miner();
-		miner.mine();
+		ForwardMiner miner = new ForwardMiner();
+		miner.buildUpFrom(Graph.generateRandom(8));
 	}
 
 }
