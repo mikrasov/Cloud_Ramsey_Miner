@@ -18,14 +18,14 @@ import com.google.gson.Gson;
 
 public class AppServer implements Container {
 	
-	
+	public static String SERVER_IP = "localhost:8080";
 	public static class Task implements Runnable {
 		  
 		private class CloudResponce{
 			private int value1 = 1;
-			  private String value2 = "abc";
-			  private  int value3 = 3;
-			  CloudResponce() {} 
+			private String value2 = "abc";
+			private  int value3 = 3;
+			 CloudResponce() {} 
 		}
 		
 	      private final Response response;
