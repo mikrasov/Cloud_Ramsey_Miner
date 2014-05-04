@@ -3,12 +3,9 @@ package com.cloudmine.mine;
 import java.util.List;
 
 import com.cloudmine.Graph;
-import com.cloudmine.http.AppClient;
-import com.cloudmine.http.AppServer;
 
 public abstract class Miner implements Runnable{
 
-	protected transient AppClient client = new AppClient(AppServer.SERVER_IP);
 	protected transient Thread thread = new Thread(this);
 	protected transient Graph current;
 	protected transient List<Solution> solutionQueue;

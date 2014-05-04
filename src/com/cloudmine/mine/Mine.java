@@ -5,15 +5,14 @@ import java.util.List;
 
 import com.cloudmine.Graph;
 import com.cloudmine.http.AppClient;
-import com.cloudmine.http.AppServer;
 import com.google.gson.Gson;
 
 public class Mine implements Runnable{
 
 	private static transient final int THREAD_TIMEOUT = 5*1000;
+	public static final String SERVER_IP = "http://localhost:8080";
 	
-
-	protected transient AppClient master = new AppClient(AppServer.SERVER_IP);
+	protected transient AppClient master = new AppClient(SERVER_IP);
 	protected List<Solution> solutionsQueue = new LinkedList<>();
 	
 	protected transient Gson gson = new Gson();
@@ -30,7 +29,10 @@ public class Mine implements Runnable{
 	
 	
 	protected void contactServer(){
-		System.out.println(gson.toJson(this));
+		String json = gson.toJson(this);
+		
+		System.out.println(json);
+		String responce = master.post(json);
 		solutionsQueue.clear();
 	}
 	
@@ -38,10 +40,9 @@ public class Mine implements Runnable{
 	public void run() {
 		while(true){		
 			try {
-				
 				contactServer();
 				Thread.sleep(THREAD_TIMEOUT);
-			} catch (InterruptedException e) {}
+			} catch (Exception e) {}
 		}
 	}
 

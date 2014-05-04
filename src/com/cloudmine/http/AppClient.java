@@ -7,6 +7,9 @@ import java.io.InputStreamReader;
 import java.net.HttpURLConnection;
 import java.net.URL;
 
+import com.cloudmine.mine.Solution;
+import com.google.gson.Gson;
+
 public class AppClient {
 
 	private String targetURL;
@@ -14,7 +17,6 @@ public class AppClient {
 	public AppClient(String targetURL){
 		this.targetURL = targetURL;
 	}
-	
 
 	public String post(String urlParameters) {
 	    URL url;
@@ -24,11 +26,9 @@ public class AppClient {
 	      url = new URL(targetURL);
 	      connection = (HttpURLConnection)url.openConnection();
 	      connection.setRequestMethod("POST");
-	      connection.setRequestProperty("Content-Type", 
-	           "application/x-www-form-urlencoded");
+	      connection.setRequestProperty("Content-Type", "text/json");
 				
-	      connection.setRequestProperty("Content-Length", "" + 
-	               Integer.toString(urlParameters.getBytes().length));
+	      connection.setRequestProperty("Content-Length", "" + Integer.toString(urlParameters.getBytes().length));
 	      connection.setRequestProperty("Content-Language", "en-US");  
 				
 	      connection.setUseCaches (false);
@@ -66,5 +66,13 @@ public class AppClient {
 	      }
 	    }
 	  }
+	
+	public static void main(String[] args) {
+		AppClient client = new AppClient("http://localhost:8080");
+		Gson gson = new Gson();
+		
+		String s = client.post( gson.toJson(new Solution(17, "10101", 8, true)) );
+		System.out.println(s);
+	}
 
 }
