@@ -1,29 +1,19 @@
 package com.cloudmine.mine;
 
+import java.util.List;
+
 import com.cloudmine.Graph;
 import com.cloudmine.TabooList;
 
-public class ForwardMiner {
+public class ForwardMiner extends Miner{
+
+	private static final int MIN_USEFULL_SOLUTION = 45;
 	
-	
-	public Graph buildUpFrom(Graph seed){
-		
-		Graph solution = findCounterExample(seed);
-		
-		while(solution.size() < 103){
-			
-			solution = solution.extendRandom();
-			findCounterExample(solution);
-			System.out.println(">>Counter-example found on "+solution.size()+"!\n"+solution);
-		}
-		
-		//Best Artifact
-		System.out.println("Found one!"+solution);
-		return solution;
+	public ForwardMiner(List<Solution> solutionQueue) {
+		super(solutionQueue);
 	}
-	
-	
-	public Graph findCounterExample(Graph g){
+
+	public boolean findCounterExample(Graph g){
 		TabooList taboo = new TabooList();
 		
 		while(true){
@@ -31,10 +21,9 @@ public class ForwardMiner {
 			int count = g.cliqueCount();
 	
 			//if we have a counter example
-			if(count == 0)
-			{
+			if(count == 0) {
 				//YAY FOUND IT!
-				return g;
+				return true;
 			}
 	
 			/*
@@ -61,7 +50,7 @@ public class ForwardMiner {
 	
 					if(count == 0){
 						//YAY FOUND IT!
-						return g;
+						return true;
 					}
 					
 					// is it better and the i,j,count not taboo?
@@ -80,7 +69,7 @@ public class ForwardMiner {
 	
 			if(best_count == Integer.MAX_VALUE) {
 				System.out.println("no best edge found");
-				return null;
+				return false;
 			}
 			
 			// keep the best flip we saw
@@ -93,20 +82,37 @@ public class ForwardMiner {
 			count = g.cliqueCount();
 			taboo.add(best_i,best_j);
 	
+			/*
 			System.out.println("size: "+g.size()+"\t"
 					+ "best_count: "+best_count+"\t"
 					+ "best edge: ("+best_i+","+best_j+")\t"
 					+ "color: "+ (g.get(best_i, best_j)?1:0)
 					);
+		*/
 			// rinse and repeat
 		}
 		
 	}
 
-	
-	public static void main(String[] args) {
-		ForwardMiner miner = new ForwardMiner();
-		miner.buildUpFrom(Graph.generateRandom(8));
+	@Override
+	public void run() {
+		
+		boolean isSolved = false;
+		do{
+			size = current.size();
+			isSolved = findCounterExample(current);
+			
+			//System.out.println(">>Counter-example found on "+current.size()+"!\n"+current);
+			
+			if(size> MIN_USEFULL_SOLUTION){
+				sendSolution(isSolved);
+			}
+			
+			current = current.extendRandom();
+		}
+		while(current.size() < 103);
+		
+		running = false;
 	}
 
 }
