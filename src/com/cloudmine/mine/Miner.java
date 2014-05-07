@@ -1,6 +1,7 @@
 package com.cloudmine.mine;
 
 import java.util.List;
+import java.util.UUID;
 
 import com.cloudmine.Graph;
 
@@ -10,9 +11,11 @@ public abstract class Miner implements Runnable{
 	protected transient Graph current;
 	protected transient List<Solution> solutionQueue;
 	
+	private final UUID id = UUID.randomUUID();
+	
 	protected boolean running = false;
-	protected int taskId;
-	protected int size;
+	protected int taskId = -1;
+	protected int size = -1;
 	
 	public Miner(List<Solution> solutionQueue) {
 		this.solutionQueue = solutionQueue;

@@ -23,7 +23,10 @@ public class Mine implements Runnable{
 	
 	public Mine(int numMiners) {
 		miners = new Miner[numMiners];
-		miners[0] = new ForwardMiner(solutionsQueue);
+		for(int i=0; i < miners.length; i++)
+			miners[i] = new ForwardMiner(solutionsQueue);
+		
+		//FOR TESTING START FIRST MINER
 		miners[0].mine(Graph.generateRandom(8), 7);
 	}
 	
@@ -31,8 +34,9 @@ public class Mine implements Runnable{
 	protected void contactServer(){
 		String json = gson.toJson(this);
 		
-		System.out.println(json);
+		//System.out.println("M REQUEST:"+json);
 		String responce = master.post(json);
+		//System.out.println("M RESPONCE:"+responce);
 		solutionsQueue.clear();
 	}
 	

@@ -49,23 +49,28 @@ public class Foreman extends AppServer {
 		JsonParser jparse = new JsonParser();
 		JsonObject jStatus = jparse.parse(request).getAsJsonObject();
 		
-		System.out.println("Request: "+request);
+		System.out.println("REQUEST: "+request);
 		
 		JsonArray jSolutions = jStatus.get("solutionsQueue").getAsJsonArray();
-		System.out.println("Solutions");
+		System.out.println("> Solutions:");
 		for(JsonElement s: jSolutions){
-			Solution solution = gson.fromJson(s, Solution.class);
-			System.out.println(solution);
+			Graph solution = gson.fromJson(s, Solution.class).convertToGraph();
+			bank.put(solution);
+			System.out.println("\tAdding : "+solution.encodeAsJsonValue());
 		}
 		
 		JsonArray jMiners = jStatus.get("miners").getAsJsonArray();
-		System.out.println("miners:");
+		System.out.println("> Miners:");
 		for(JsonElement m: jMiners){
-			System.out.println(m);
+			System.out.println("\t"+m);
 		}
 		
+		bank.save();
 		
-		return gson.toJsonTree(new Solution(3, "1010", 3, true));
+		
+		JsonElement responce = gson.toJsonTree(new Solution(3, "1010", 3, true));
+		System.out.println("RESPONCE: "+responce);
+		return responce;
 	}
 
 }
