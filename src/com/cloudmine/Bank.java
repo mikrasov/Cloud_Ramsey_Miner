@@ -31,27 +31,22 @@ public class Bank implements Serializable{
 		}
 	}
 
-	public boolean put( Graph example){
+	public synchronized boolean put( Graph example){
 		List<Graph> set = bank[example.size()];
 		
 		//Do Isomorph check
 		for(Graph a: set) if(a.isIsomorphOf(example)) return false;
 
 		bank[example.size()].add(example);
-		try {
-			save();
-		} catch (IOException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		}
+		
 		return true;
 	}
 	
-	public List<Graph> get(int level){
+	public synchronized List<Graph> get(int level){
 		return bank[level];
 	}
 	
-	public void save() throws IOException{
+	public synchronized void save() throws IOException{
 		ObjectOutputStream out = new ObjectOutputStream(new FileOutputStream(bankTempFile));
 		out.writeObject(bank);
 		out.close();
