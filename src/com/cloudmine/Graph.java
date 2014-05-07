@@ -8,9 +8,10 @@ public class Graph implements Comparable<Graph>, Serializable{
 	
 	private static final long serialVersionUID = 5253025260499448857L;
 	
-	private static final int SUB_GRAPH_SIZE = 6;
-	private static final Random rnd = new Random();
+	private static transient  final int SUB_GRAPH_SIZE = 6;
+	private static transient final Random rnd = new Random();
 	
+	//private final UUID uuid = UUID.randomUUID();
 	private BitSet matrix;
 	private int size; 
 		

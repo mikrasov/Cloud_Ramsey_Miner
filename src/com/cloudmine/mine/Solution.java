@@ -1,5 +1,7 @@
 package com.cloudmine.mine;
 
+import com.cloudmine.Graph;
+
 public class Solution {
 	
 	private final int task_id;
@@ -29,5 +31,14 @@ public class Solution {
 	
 	public boolean isSolved(){
 		return solved;
+	}
+	
+	public Graph convertToGraph(){
+		return new Graph(size, graph);
+	}
+	
+	@Override
+	public String toString() {
+		return graph;
 	}
 }

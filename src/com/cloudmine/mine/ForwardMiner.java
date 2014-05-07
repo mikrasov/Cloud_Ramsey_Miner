@@ -7,7 +7,7 @@ import com.cloudmine.TabooList;
 
 public class ForwardMiner extends Miner{
 
-	private static final int MIN_USEFULL_SOLUTION = 45;
+	private static final int MIN_USEFULL_SOLUTION = 40;
 	
 	public ForwardMiner(List<Solution> solutionQueue) {
 		super(solutionQueue);
