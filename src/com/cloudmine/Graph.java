@@ -4,7 +4,6 @@ import java.io.Serializable;
 import java.util.BitSet;
 import java.util.Random;
 
-
 public class Graph implements Comparable<Graph>, Serializable{
 	
 	private static final long serialVersionUID = 5253025260499448857L;
@@ -13,8 +12,8 @@ public class Graph implements Comparable<Graph>, Serializable{
 	private static final Random rnd = new Random();
 	
 	private BitSet matrix;
-	private final int size; 
-	
+	private int size; 
+		
 	/**
 	 * Create new matrix based Graph representation (zero filled)
 	 * @param size of graph to create
@@ -23,7 +22,20 @@ public class Graph implements Comparable<Graph>, Serializable{
 		this.size = size;
 		matrix = new BitSet(size*size);
 	}
-
+	
+	/**
+	 * Create new matrix based representations, based on existing graph
+	 * @param size of graph to create
+	 * @param graph represented as a single line binary string sequence
+	 */
+	public Graph (int size, String graph) {
+		this(size);
+		for(int i=0; i <graph.length(); i++){
+			if(graph.charAt(i) == '1')
+				matrix.set(i);	
+		}
+	}
+	
 	/**
 	 * Get graph size
 	 * @return number of nodes in graph
@@ -213,7 +225,6 @@ public class Graph implements Comparable<Graph>, Serializable{
 		return out;
 	}
 	
-	
 	@Override
 	public String toString() {		
 		String out ="";
@@ -257,6 +268,4 @@ public class Graph implements Comparable<Graph>, Serializable{
          }
 	}
 	
-	
-
 }
