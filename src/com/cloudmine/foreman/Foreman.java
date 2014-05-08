@@ -1,6 +1,9 @@
 package com.cloudmine.foreman;
 
 import java.io.IOException;
+import java.util.LinkedList;
+import java.util.List;
+import java.util.UUID;
 
 import com.cloudmine.Bank;
 import com.cloudmine.Graph;
@@ -15,7 +18,9 @@ import com.google.gson.JsonParser;
 public class Foreman extends AppServer {
 
 	protected Bank bank = new Bank();
-	
+	protected JsonParser jparse = new JsonParser();
+	protected Gson gson = new Gson();
+
 	public Foreman(int port) throws IOException {
 		super(8080);
 		bank.put(Graph.generateRandom(8));
@@ -45,13 +50,12 @@ public class Foreman extends AppServer {
 
 	@Override
 	public JsonElement process(String request) throws IOException {
-		Gson gson = new Gson();
-		JsonParser jparse = new JsonParser();
-		JsonObject jStatus = jparse.parse(request).getAsJsonObject();
+		
+		JsonObject jRequest = jparse.parse(request).getAsJsonObject();
 		
 		System.out.println("REQUEST: "+request);
 		
-		JsonArray jSolutions = jStatus.get("solutionsQueue").getAsJsonArray();
+		JsonArray jSolutions = jRequest.get("solutionsQueue").getAsJsonArray();
 		System.out.println("> Solutions:");
 		for(JsonElement s: jSolutions){
 			Graph solution = gson.fromJson(s, Solution.class).convertToGraph();
@@ -59,16 +63,26 @@ public class Foreman extends AppServer {
 			System.out.println("\tAdding : "+solution.encodeAsJsonValue());
 		}
 		
-		JsonArray jMiners = jStatus.get("miners").getAsJsonArray();
+		List<Task> taskList = new LinkedList<>();
+		JsonArray jMiners = jRequest.get("miners").getAsJsonArray();
 		System.out.println("> Miners:");
 		for(JsonElement m: jMiners){
+			JsonObject jminer = m.getAsJsonObject();
+			UUID minerId = UUID.fromString(jminer.get("id").getAsString());
+			boolean running = jminer.get("running").getAsBoolean();
+			
+			if(!running)
+				taskList.add(new Task(minerId, Graph.generateRandom(8)));
 			System.out.println("\t"+m);
 		}
 		
 		bank.save();
 		
 		
-		JsonElement responce = gson.toJsonTree(new Solution(3, "1010", 3, true));
+		
+		
+		
+		JsonElement responce = gson.toJsonTree(taskList);
 		System.out.println("RESPONCE: "+responce);
 		return responce;
 	}

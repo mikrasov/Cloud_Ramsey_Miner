@@ -1,24 +1,26 @@
 package com.cloudmine.mine;
 
+import java.util.UUID;
+
 import com.cloudmine.Graph;
 
 public class Solution {
 	
-	private final int task_id;
+	private final UUID taskId;
 	private final String graph;
 	private final int size;
 	private final boolean solved;
 	
-	public Solution(int task_id, String graph, int size, boolean solved) {
+	public Solution(UUID taskId, String graph, int size, boolean solved) {
 		super();
-		this.task_id = task_id;
+		this.taskId = taskId;
 		this.size = size;
 		this.graph = graph;
 		this.solved = solved;
 	}
 
-	public int getTask_id() {
-		return task_id;
+	public UUID getTaskId() {
+		return taskId;
 	}
 
 	public int getSize() {

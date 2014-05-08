@@ -6,6 +6,7 @@ import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.net.HttpURLConnection;
 import java.net.URL;
+import java.util.UUID;
 
 import com.cloudmine.mine.Solution;
 import com.google.gson.Gson;
@@ -71,7 +72,7 @@ public class AppClient {
 		AppClient client = new AppClient("http://localhost:8080");
 		Gson gson = new Gson();
 		
-		String s = client.post( gson.toJson(new Solution(17, "10101", 8, true)) );
+		String s = client.post( gson.toJson(new Solution(UUID.randomUUID(), "10101", 8, true)) );
 		System.out.println(s);
 	}
 

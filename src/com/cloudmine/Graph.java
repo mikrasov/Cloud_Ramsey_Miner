@@ -38,6 +38,19 @@ public class Graph implements Comparable<Graph>, Serializable{
 	}
 	
 	/**
+	 * Copy Constructor
+	 * @param toCopy
+	 */
+	public Graph (Graph toCopy) {
+		Graph copy = new Graph(toCopy.size());
+		for(int row=0; row < size; row++) {
+			for(int col=0; col < size; col++) {
+				copy.set(row, col, get(row,col));
+			}
+		}
+	}
+	
+	/**
 	 * Get graph size
 	 * @return number of nodes in graph
 	 */
@@ -267,6 +280,11 @@ public class Graph implements Comparable<Graph>, Serializable{
              }
              return 0;
          }
+	}
+	
+	@Override
+	protected Object clone() throws CloneNotSupportedException {
+		return new Graph(this);
 	}
 	
 }

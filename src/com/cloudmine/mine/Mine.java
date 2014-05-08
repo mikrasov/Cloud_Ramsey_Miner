@@ -2,10 +2,14 @@ package com.cloudmine.mine;
 
 import java.util.LinkedList;
 import java.util.List;
+import java.util.UUID;
 
-import com.cloudmine.Graph;
+import com.cloudmine.foreman.Task;
 import com.cloudmine.http.AppClient;
 import com.google.gson.Gson;
+import com.google.gson.JsonArray;
+import com.google.gson.JsonElement;
+import com.google.gson.JsonParser;
 
 public class Mine implements Runnable{
 
@@ -16,6 +20,7 @@ public class Mine implements Runnable{
 	protected List<Solution> solutionsQueue = new LinkedList<>();
 	
 	protected transient Gson gson = new Gson();
+	protected transient JsonParser jparse = new JsonParser();
 	protected transient Thread thread = new Thread(this);
 	protected transient int timeSinceLastPost = 0;
 	
@@ -25,9 +30,6 @@ public class Mine implements Runnable{
 		miners = new Miner[numMiners];
 		for(int i=0; i < miners.length; i++)
 			miners[i] = new ForwardMiner(solutionsQueue);
-		
-		//FOR TESTING START FIRST MINER
-		miners[0].mine(Graph.generateRandom(8), 7);
 	}
 	
 	
@@ -36,9 +38,26 @@ public class Mine implements Runnable{
 		
 		//System.out.println("M REQUEST:"+json);
 		String responce = master.post(json);
-		//System.out.println("M RESPONCE:"+responce);
+		
+		
+		System.out.println("M RESPONCE:"+responce);
+		
+		JsonArray jTasks = jparse.parse(responce).getAsJsonArray();
+		System.out.println("M Tasks: "+jTasks);
+
+		
+		for(JsonElement t: jTasks){
+			Task task = gson.fromJson(t, Task.class);
+			
+			for(Miner m : miners)
+				m.assign(task);
+			
+				
+			System.out.println("\tproc : "+task);
+		}
 		solutionsQueue.clear();
 	}
+	
 	
 	@Override
 	public void run() {
