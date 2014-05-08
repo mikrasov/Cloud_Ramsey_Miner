@@ -3,6 +3,8 @@ package com.cloudmine.foreman;
 import java.io.IOException;
 import java.util.LinkedList;
 import java.util.List;
+import java.util.Map;
+import java.util.TreeMap;
 import java.util.UUID;
 
 import com.cloudmine.Bank;
@@ -17,40 +19,22 @@ import com.google.gson.JsonParser;
 
 public class Foreman extends AppServer {
 
+	public static final int DEAFAULT_PORT = 8080;
+	
+	protected final JsonParser jparse = new JsonParser();
+	protected final Gson gson = new Gson();
+	
 	protected Bank bank = new Bank();
-	protected JsonParser jparse = new JsonParser();
-	protected Gson gson = new Gson();
-
-	public Foreman(int port) throws IOException {
-		super(8080);
-		bank.put(Graph.generateRandom(8));
+	protected Map<UUID, Task> map = new TreeMap<>();
+	
+	public Foreman(Bank bank, Map<UUID, Task> map) {
+		super(DEAFAULT_PORT, AppServer.CONTENT_JSON);
+		this.bank = bank;
+		this.map = map;
 	}
 
-   public static void main(String[] list) throws IOException {
-	   Foreman master = new Foreman(8080);
-	   
-	   System.out.println("Starting Foreman");
-	   master.load();
-	   
-	  
-	   master.start();
-	   System.out.println("Started");
-	   
-   }
-   
-   public void load(){
-	   System.out.print("Trying to load from file '"+Bank.BANK_FILENAME+"' : ");
-	   try {
-		   bank.load();
-		   System.out.println("File loaded");
-	   } catch (ClassNotFoundException | IOException e) {
-			System.out.println("Failed to Load file");
-	   }
-   }
-
 	@Override
-	public JsonElement process(String request) throws IOException {
-		
+	public String process(String request) throws IOException {	
 		JsonObject jRequest = jparse.parse(request).getAsJsonObject();
 		
 		System.out.println("REQUEST: "+request);
@@ -71,20 +55,18 @@ public class Foreman extends AppServer {
 			UUID minerId = UUID.fromString(jminer.get("id").getAsString());
 			boolean running = jminer.get("running").getAsBoolean();
 			
-			if(!running)
-				taskList.add(new Task(minerId, Graph.generateRandom(8)));
+			if(!running){
+				Task task = new Task(minerId, Graph.generateRandom(8));
+				taskList.add(task);
+				map.put(task.getTaskId(), task);
+			}
 			System.out.println("\t"+m);
 		}
 		
 		bank.save();
 		
-		
-		
-		
-		
 		JsonElement responce = gson.toJsonTree(taskList);
 		System.out.println("RESPONCE: "+responce);
-		return responce;
+		return responce.toString();
 	}
-
 }

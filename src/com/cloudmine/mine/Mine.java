@@ -2,7 +2,6 @@ package com.cloudmine.mine;
 
 import java.util.LinkedList;
 import java.util.List;
-import java.util.UUID;
 
 import com.cloudmine.foreman.Task;
 import com.cloudmine.http.AppClient;

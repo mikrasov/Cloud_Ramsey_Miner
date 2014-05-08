@@ -46,6 +46,10 @@ public class Bank implements Serializable{
 		return bank[level];
 	}
 	
+	public int numLevels(){
+		return bank.length;
+	}
+	
 	public synchronized void save() throws IOException{
 		ObjectOutputStream out = new ObjectOutputStream(new FileOutputStream(bankTempFile));
 		out.writeObject(bank);

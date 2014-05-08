@@ -13,17 +13,21 @@ import org.simpleframework.transport.Server;
 import org.simpleframework.transport.connect.Connection;
 import org.simpleframework.transport.connect.SocketConnection;
 
-import com.google.gson.JsonElement;
-
 public abstract class AppServer implements Container {
 		
+	public static final String CONTENT_HTML = "text/html";
+	public static final String CONTENT_JSON = "text/json";
+	
+	
 	protected final int port;
+	private String contentType;
 	private Server server;
 	private Connection connection;
 	private SocketAddress address;
 	   
-	public AppServer(int port){
+	public AppServer(int port, String contentType){
 		this.port = port;
+		this.contentType = contentType;
 	}
 	   
 	public void start() throws IOException{
@@ -40,7 +44,7 @@ public abstract class AppServer implements Container {
 	   
 	         body.println( process(request.getContent()) );
 	         
-	         response.setValue("Content-Type", "text/json");
+	         response.setValue("Content-Type", contentType);
 	         response.setValue("Server", "CloudMine/1.0 (Simple 4.0)");
 	         response.setDate("Date", time);
 	         response.setDate("Last-Modified", time);
@@ -58,5 +62,5 @@ public abstract class AppServer implements Container {
 		} catch (IOException e) {}
 	}
 	
-	public abstract JsonElement process(String request) throws IOException;
+	public abstract String process(String request) throws IOException;
 }
