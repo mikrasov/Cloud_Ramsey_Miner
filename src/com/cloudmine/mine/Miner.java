@@ -1,7 +1,8 @@
 package com.cloudmine.mine;
 
-import java.util.List;
+import java.util.Queue;
 import java.util.UUID;
+import java.util.concurrent.ConcurrentLinkedQueue;
 
 import com.cloudmine.Graph;
 import com.cloudmine.foreman.Task;
@@ -10,17 +11,13 @@ public abstract class Miner implements Runnable{
 
 	protected transient Thread thread = new Thread(this);
 	protected transient Graph current;
-	protected transient List<Solution> solutionQueue;
+	protected transient Queue<Solution> solutionQueue = new ConcurrentLinkedQueue<>();
 	
 	private final UUID id = UUID.randomUUID();
 	
 	protected boolean running = false;
 	protected int size = -1;
 	protected UUID task;
-	
-	public Miner(List<Solution> solutionQueue) {
-		this.solutionQueue = solutionQueue;
-	}
 	
 	public void mine(Graph graph){
 		running = true;
@@ -47,6 +44,9 @@ public abstract class Miner implements Runnable{
 		mine(task.getSeed());
 	}
 	
+	public Solution poll(){
+		return solutionQueue.poll();
+	}
 	public UUID getId(){
 		return id;
 	}

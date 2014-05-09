@@ -28,7 +28,7 @@ public class Mine implements Runnable{
 	public Mine(int numMiners) {
 		miners = new Miner[numMiners];
 		for(int i=0; i < miners.length; i++)
-			miners[i] = new ForwardMiner(solutionsQueue);
+			miners[i] = new ForwardMiner();
 	}
 	
 	
@@ -57,11 +57,22 @@ public class Mine implements Runnable{
 		solutionsQueue.clear();
 	}
 	
+	protected void pollMiners(){
+		for(Miner m :miners){
+			Solution s = m.poll();
+			while(s != null){
+				solutionsQueue.add(s);
+				s = m.poll();
+			}
+		}
+	}
+	
 	
 	@Override
 	public void run() {
 		while(true){		
 			try {
+				pollMiners();
 				contactServer();
 				Thread.sleep(THREAD_TIMEOUT);
 			} catch (Exception e) {}
