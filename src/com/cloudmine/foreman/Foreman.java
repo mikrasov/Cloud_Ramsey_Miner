@@ -39,16 +39,29 @@ public class Foreman extends AppServer {
 		
 		System.out.println("REQUEST: "+request);
 		
-		JsonArray jSolutions = jRequest.get("solutionsQueue").getAsJsonArray();
+		parseSolutions(jRequest.get("solutionsQueue").getAsJsonArray());
+
+		List<Task> taskList = processMiners(jRequest.get("miners").getAsJsonArray() );
+		
+		bank.save();
+		
+		JsonElement responce = gson.toJsonTree(taskList);
+		System.out.println("RESPONCE: "+responce);
+		return responce.toString();
+	}
+	
+	private void parseSolutions(JsonArray jSolutions ){
 		System.out.println("> Solutions:");
 		for(JsonElement s: jSolutions){
 			Graph solution = gson.fromJson(s, Solution.class).convertToGraph();
 			bank.put(solution);
 			System.out.println("\tAdding : "+solution.encodeAsJsonValue());
 		}
-		
+	}
+	
+	
+	private List<Task> processMiners(JsonArray jMiners){
 		List<Task> taskList = new LinkedList<>();
-		JsonArray jMiners = jRequest.get("miners").getAsJsonArray();
 		System.out.println("> Miners:");
 		for(JsonElement m: jMiners){
 			JsonObject jminer = m.getAsJsonObject();
@@ -62,11 +75,6 @@ public class Foreman extends AppServer {
 			}
 			System.out.println("\t"+m);
 		}
-		
-		bank.save();
-		
-		JsonElement responce = gson.toJsonTree(taskList);
-		System.out.println("RESPONCE: "+responce);
-		return responce.toString();
+		return taskList;
 	}
 }
