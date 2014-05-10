@@ -17,12 +17,18 @@ import java.util.Date;
 public class SimpleHTTPPOSTRequester {
     
     private String apiusername;
-    private long Timestamp;
-    private String apiURL;
+    private long tStamp = Timestamp.getTime();
+    private String apiURL = "http://richcoin.cs.ucsb.edu:8280/vault/1.0.0";
+    URL url = new URL("http://richcoin.cs.ucsb.edu:8280/vault/1.0.0");
     
-    Graph graObj = new Graph(6);
+    Calendar calendar = Calendar.getInstance();
+    java.sql.Date currentTimestamp = new java.sql.Timestamp(calendar.getTime().getTime());
+    FinalTime = currentTimestamp.toString();
     
-    public SimpleHTTPPOSTRequester(String solution, long Timestamp, String apiURL) {
+    
+    Graph graObj = new Graph(6); //taking size as 6
+    
+    public SimpleHTTPPOSTRequester(String solution, long FinalTime, String apiURL) {
 
         this.solution= graObj.toString();
         this.Timestamp = Timestamp;
