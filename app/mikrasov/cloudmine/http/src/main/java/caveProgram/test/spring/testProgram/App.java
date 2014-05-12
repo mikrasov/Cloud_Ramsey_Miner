@@ -1,4 +1,4 @@
-package caveProgram.test.spring.testProgram;
+package com.mikrasov.cloudmine.http.src.main.java.caveProgram.test.spring.testProgram;
 
 /**
  * Hello world!

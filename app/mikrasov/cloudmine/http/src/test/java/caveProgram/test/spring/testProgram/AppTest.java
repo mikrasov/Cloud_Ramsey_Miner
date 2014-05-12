@@ -1,4 +1,4 @@
-package caveProgram.test.spring.testProgram;
+package com.mikrasov.cloudmine.http.src.test.java.caveProgram.test.spring.testProgram;
 
 import junit.framework.Test;
 import junit.framework.TestCase;
