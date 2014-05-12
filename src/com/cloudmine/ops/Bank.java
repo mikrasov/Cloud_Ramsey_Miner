@@ -1,4 +1,4 @@
-package com.cloudmine;
+package com.cloudmine.ops;
 
 import java.io.File;
 import java.io.FileInputStream;
@@ -11,11 +11,14 @@ import java.io.Serializable;
 import java.util.LinkedList;
 import java.util.List;
 
+import com.cloudmine.Graph;
+
 public class Bank implements Serializable{
 
 	private static final long serialVersionUID = 8867753203624856389L;
 
 	public static final int GRAPH_LESS_THAN = 103;
+	public static final int GRAPH_AT_LEAST = 7;
 	public static final String BANK_FILENAME = "bank.save";
 	public static final String BANK_TEMP_FILENAME = "bank.tmp";
 
@@ -44,6 +47,24 @@ public class Bank implements Serializable{
 	
 	public synchronized List<Graph> get(int level){
 		return bank[level];
+	}
+	
+	public Graph getBest(int startingAt){
+		if(startingAt > bank.length-1) 
+			startingAt = bank.length-1;
+		
+		//Search for best starting point
+		for(int size=startingAt; size>=GRAPH_AT_LEAST; size--){
+			for(Graph g: bank[size]){
+				if(!g.isAssigned())
+					return g;
+			}
+			
+		}
+		//could not find one, so make one
+		Graph g = Graph.generateRandom(GRAPH_AT_LEAST);
+		put(g);
+		return g;
 	}
 	
 	public int numLevels(){
