@@ -8,13 +8,15 @@ public class Graph implements Comparable<Graph>, Serializable{
 	
 	private static final long serialVersionUID = 5253025260499448857L;
 	
-	private static transient  final int SUB_GRAPH_SIZE = 6;
+	private static transient final int SUB_GRAPH_SIZE = 6;
 	private static transient final Random rnd = new Random();
 	
-	//private final UUID uuid = UUID.randomUUID();
+	private transient boolean assigned = false;
+	
 	private BitSet matrix;
 	private int size; 
-		
+	
+	
 	/**
 	 * Create new matrix based Graph representation (zero filled)
 	 * @param size of graph to create
@@ -42,10 +44,11 @@ public class Graph implements Comparable<Graph>, Serializable{
 	 * @param toCopy
 	 */
 	public Graph (Graph toCopy) {
-		Graph copy = new Graph(toCopy.size());
+		this(toCopy.size());
+	
 		for(int row=0; row < size; row++) {
 			for(int col=0; col < size; col++) {
-				copy.set(row, col, get(row,col));
+				set(row, col, toCopy.get(row,col));
 			}
 		}
 	}
@@ -148,6 +151,25 @@ public class Graph implements Comparable<Graph>, Serializable{
 	}
 	
 	/**
+	 * Returns number of connected neighbors
+	 * @param node id
+	 * @return number of neighbors
+	 */
+	public int countNeighbors(int node){
+		int neighbors = 0;
+		
+		for(int i=node+1; i<size; i++){
+			if( get(node,i) ) 
+				neighbors++;
+		}
+		for(int i=0; i< node; i++){
+			if( get(i,node) ) 
+				neighbors++;
+		}
+		return neighbors;
+	}
+	
+	/**
 	 * Extend the graph by adding a node (increasing the size by 1).
 	 * The new edges are zero filled.
 	 * @return extended graph
@@ -179,24 +201,7 @@ public class Graph implements Comparable<Graph>, Serializable{
 		}
 		return graph;
 	}
-	
-	/**
-	 * Mirror upper triangle to lower triangle
-	 * @return mirrored graph
-	 */
-	public Graph mirror(){
-		Graph graph = new Graph(size);
-		
-		for(int row=0; row < size; row++) {
-			for(int col=row+1; col < size; col++) {
-				if(this.get(row, col)) {
-					graph.set(row,col, true);
-					graph.set(col,row, true);
-				}
-			}
-		}
-		return graph;
-	}
+
 	
 	/**
 	 * Generate random graph as upper triangular matrix
@@ -222,27 +227,92 @@ public class Graph implements Comparable<Graph>, Serializable{
 	 */
 	public boolean isIsomorphOf(Graph o){
 		//METHOD STUB
+		
+		
+		/*
+		 
+		 */
 		return this.equals(o);
+	}
+		
+	/**
+	 * Invert all edges 1 <-> 0
+	 */
+	public void invert(){
+		matrix.flip(0, matrix.size());
+	}
+	
+	/**
+	 * Mirror matrix and set dominant value to zero
+	 * @return
+	 */
+	public Graph normalize(){
+		Graph graph = new Graph(this);
+		graph.mirror();
+		
+		//Dominant value 1 then invert
+		if( dominantValue())
+			invert();
+		
+		return graph;
 	}
 	
 	/**
 	 * Mirror upper triangular matrix, and encode it as a string
 	 * @return string
 	 */
-	public String encodeAsJsonValue(){
-		Graph graph = this.mirror();
-		
+	public String encodeAsJsonValue(){		
 		String out ="";
 		for(int i=0; i < size*size; i++) {
-			out+=  graph.matrix.get(i)?1:0 ;
+			out+=  matrix.get(i)?1:0 ;
 		}
 		return out;
 	}
 	
+	public void assign(){ assigned = true;}
+	public void unassigned(){assigned = false;}
+	public boolean isAssigned(){ return assigned;}
+	
+	
+	//--------------------------------------------------------
+	//					Private Methods
+	//--------------------------------------------------------
+	
+	/**
+	 * Returns the most common edge type
+	 * @return	true if 1 is common edge
+	 * 			false if 0 is most common edge
+	 */
+	private boolean dominantValue(){
+		int numSet = matrix.cardinality();
+		int numUnset = matrix.size() - numSet;
+	
+		return numSet > numUnset;
+	}
+	
+	/**
+	 * Mirror upper triangle to lower triangle
+	 * @return mirrored graph
+	 */
+	private void mirror(){
+		for(int row=0; row < size; row++) {
+			for(int col=row+1; col < size; col++) {
+				if(get(row, col)) {
+					set(row,col, true);
+					set(col,row, true);
+				}
+			}
+		}
+	}
+	
+	//--------------------------------------------------------
+	//				Overide Basic Methods
+	//--------------------------------------------------------
 	@Override
 	public String toString() {		
-		String out ="";
+		String out ="Graph ("+size+") "+matrix.cardinality()+"/"+matrix.size()+"\n";
 		for(int row=0; row < size; row++) {
+			out += " |";
 			for(int col=0; col < size; col++)
 			{
 				out+=  (get(row,col)?1:0) +" ";
