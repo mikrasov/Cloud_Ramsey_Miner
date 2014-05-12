@@ -2,8 +2,6 @@ package com.cloudmine;
 
 import java.util.UUID;
 
-import com.cloudmine.Graph;
-
 public class Task {
 
 	private final UUID taskId = UUID.randomUUID();
@@ -26,7 +24,7 @@ public class Task {
 	}
 	
 	public Graph getSeed(){
-		return new Graph(seed);
+		return seed;
 	}
 	
 	public void setLastSeen(long timeMillesecond){
@@ -43,6 +41,6 @@ public class Task {
 
 	@Override
 	public String toString() {
-		return taskId.toString();
+		return taskId.toString()+" ("+seed.size()+")";
 	}
 }

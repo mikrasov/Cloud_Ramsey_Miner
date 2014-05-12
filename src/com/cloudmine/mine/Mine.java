@@ -15,7 +15,7 @@ public class Mine implements Runnable{
 	private static transient final int THREAD_TIMEOUT = 5*1000;
 	public static final String SERVER_IP = "http://localhost:8080";
 	
-	protected final String server;
+	protected final String type;
 	protected final boolean longTerm;
 	protected List<Solution> solutionsQueue = new LinkedList<>();
 	
@@ -27,23 +27,21 @@ public class Mine implements Runnable{
 	
 	protected  Miner[] miners;
 	
-	public Mine(String server, int numMiners, boolean longTerm) {
-		this.server = server;
+	public Mine(String machineType, int numMiners, boolean longTerm) {
+		this.type = machineType;
 		this.longTerm = longTerm;
 		miners = new Miner[numMiners];
 		for(int i=0; i < miners.length; i++)
 			miners[i] = new ForwardMiner();
 	}
 	
-	
 	protected void contactServer(){
 		String json = gson.toJson(this);
 		
 		//System.out.println("M REQUEST:"+json);
 		String responce = master.post(json);
-		
-		
-		System.out.println("M RESPONCE:"+responce);
+
+		//System.out.println("M RESPONCE:"+responce);
 		
 		JsonArray jTasks = jparse.parse(responce).getAsJsonArray();
 		System.out.println("M Tasks: "+jTasks);
@@ -52,11 +50,9 @@ public class Mine implements Runnable{
 		for(JsonElement t: jTasks){
 			Task task = gson.fromJson(t, Task.class);
 			
+			System.out.println("Task "+task);
 			for(Miner m : miners)
 				m.assign(task);
-			
-				
-			System.out.println("\tproc : "+task);
 		}
 		solutionsQueue.clear();
 	}
@@ -90,7 +86,7 @@ public class Mine implements Runnable{
 	}
 	
 	public static void main(String[] args) {
-		Mine mine = new Mine("LOCAL_PC",4,true);
+		Mine mine = new Mine("LOCAL_PC",2,true);
 		mine.start();
 	}
 }

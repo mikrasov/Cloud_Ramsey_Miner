@@ -18,7 +18,7 @@ public class Bank implements Serializable{
 	private static final long serialVersionUID = 8867753203624856389L;
 
 	public static final int GRAPH_LESS_THAN = 103;
-	public static final int GRAPH_AT_LEAST = 7;
+	public static final int GRAPH_AT_LEAST = 8;
 	public static final String BANK_FILENAME = "bank.save";
 	public static final String BANK_TEMP_FILENAME = "bank.tmp";
 

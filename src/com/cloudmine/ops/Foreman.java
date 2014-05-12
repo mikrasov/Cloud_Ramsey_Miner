@@ -7,7 +7,6 @@ import java.util.Map;
 import java.util.TreeMap;
 import java.util.UUID;
 
-import com.cloudmine.Bank;
 import com.cloudmine.Graph;
 import com.cloudmine.Task;
 import com.cloudmine.http.AppServer;
@@ -22,16 +21,19 @@ public class Foreman extends AppServer {
 
 	public static final int DEAFAULT_PORT = 8080;
 	
+	public static final int FAST_CUTOFF = 50;
+	public static final int SLOW_CUTOFF = 102;
+	
 	protected final JsonParser jparse = new JsonParser();
 	protected final Gson gson = new Gson();
 	
 	protected Bank bank = new Bank();
-	protected Map<UUID, Task> map = new TreeMap<>();
+	protected Map<UUID, Task> activeTasks = new TreeMap<>();
 	
 	public Foreman(Bank bank, Map<UUID, Task> map) {
 		super(DEAFAULT_PORT, AppServer.CONTENT_JSON);
 		this.bank = bank;
-		this.map = map;
+		this.activeTasks = map;
 	}
 
 	@Override
@@ -40,9 +42,11 @@ public class Foreman extends AppServer {
 		
 		System.out.println("REQUEST: "+request);
 		
+		//String type = jRequest.get("type").getAsString();
+		boolean longTerm = jRequest.get("longTerm").getAsBoolean();
 		parseSolutions(jRequest.get("solutionsQueue").getAsJsonArray());
 
-		List<Task> taskList = processMiners(jRequest.get("miners").getAsJsonArray() );
+		List<Task> taskList = processMiners(longTerm,jRequest.get("miners").getAsJsonArray() );
 		
 		bank.save();
 		
@@ -60,8 +64,7 @@ public class Foreman extends AppServer {
 		}
 	}
 	
-	
-	private List<Task> processMiners(JsonArray jMiners){
+	private List<Task> processMiners(boolean longTerm, JsonArray jMiners){
 		List<Task> taskList = new LinkedList<>();
 		System.out.println("> Miners:");
 		for(JsonElement m: jMiners){
@@ -69,13 +72,26 @@ public class Foreman extends AppServer {
 			UUID minerId = UUID.fromString(jminer.get("id").getAsString());
 			boolean running = jminer.get("running").getAsBoolean();
 			
-			if(!running){
-				Task task = new Task(minerId, Graph.generateRandom(8));
-				taskList.add(task);
-				map.put(task.getTaskId(), task);
-			}
 			System.out.println("\t"+m);
+			
+			if(!running){
+				Graph bestAvailable  = bank.getBest(longTerm?SLOW_CUTOFF:FAST_CUTOFF);
+				Task task = assign(minerId, bestAvailable);
+				taskList.add(task);
+				
+				System.out.println("\t ^ ASSIGNING: "+ task);
+			}
+			
 		}
 		return taskList;
 	}
+	
+	private Task assign(UUID targetMiner, Graph seed){
+		Task task = new Task(targetMiner, seed);
+		activeTasks.put(task.getTaskId(), task);
+		task.getSeed().assign();
+		return task;
+	}
+	
+	
 }

@@ -21,6 +21,7 @@ public abstract class Miner implements Runnable{
 	protected UUID task;
 	
 	public void mine(Graph graph){
+		
 		this.current = graph;
 		thread.start();
 	}

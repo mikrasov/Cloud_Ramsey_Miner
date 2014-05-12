@@ -52,7 +52,7 @@ public abstract class AppServer implements Container {
 	         body.close();
 	         
 	      } catch(Exception e) {
-	         e.printStackTrace();
+	         System.err.println("Error:"+ e.getMessage());
 	      }
 	}
 
