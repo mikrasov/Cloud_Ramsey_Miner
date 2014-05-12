@@ -1,4 +1,4 @@
-package com.cloudmine.foreman;
+package com.cloudmine;
 
 import java.util.UUID;
 

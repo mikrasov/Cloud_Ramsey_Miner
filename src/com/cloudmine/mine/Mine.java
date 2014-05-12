@@ -3,7 +3,7 @@ package com.cloudmine.mine;
 import java.util.LinkedList;
 import java.util.List;
 
-import com.cloudmine.foreman.Task;
+import com.cloudmine.Task;
 import com.cloudmine.http.AppClient;
 import com.google.gson.Gson;
 import com.google.gson.JsonArray;

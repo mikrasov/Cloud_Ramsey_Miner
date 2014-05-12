@@ -1,12 +1,12 @@
-package com.cloudmine.foreman;
+package com.cloudmine.ops;
 
-import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.util.Map;
 import java.util.UUID;
 import java.util.concurrent.ConcurrentHashMap;
 
 import com.cloudmine.Bank;
+import com.cloudmine.Task;
 
 public class Operation {
 

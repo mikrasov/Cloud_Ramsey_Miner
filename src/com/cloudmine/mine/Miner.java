@@ -5,7 +5,7 @@ import java.util.UUID;
 import java.util.concurrent.ConcurrentLinkedQueue;
 
 import com.cloudmine.Graph;
-import com.cloudmine.foreman.Task;
+import com.cloudmine.Task;
 
 public abstract class Miner implements Runnable{
 

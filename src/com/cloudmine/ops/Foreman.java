@@ -1,4 +1,4 @@
-package com.cloudmine.foreman;
+package com.cloudmine.ops;
 
 import java.io.IOException;
 import java.util.LinkedList;
@@ -9,6 +9,7 @@ import java.util.UUID;
 
 import com.cloudmine.Bank;
 import com.cloudmine.Graph;
+import com.cloudmine.Task;
 import com.cloudmine.http.AppServer;
 import com.cloudmine.mine.Solution;
 import com.google.gson.Gson;

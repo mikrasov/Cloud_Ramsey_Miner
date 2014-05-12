@@ -1,4 +1,4 @@
-package com.cloudmine.foreman;
+package com.cloudmine.ops;
 
 import java.io.IOException;
 import java.util.Map;
@@ -6,6 +6,7 @@ import java.util.TreeMap;
 import java.util.UUID;
 
 import com.cloudmine.Bank;
+import com.cloudmine.Task;
 import com.cloudmine.http.AppServer;
 
 public class ControlBoard extends AppServer {

@@ -2,8 +2,8 @@ package com.cloudmine;
 
 import java.io.IOException;
 
-import com.cloudmine.foreman.Operation;
 import com.cloudmine.mine.Mine;
+import com.cloudmine.ops.Operation;
 
 public class TestSystem {
 
