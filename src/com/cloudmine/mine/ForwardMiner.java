@@ -89,13 +89,14 @@ public class ForwardMiner extends Miner{
 	}
 
 	@Override
-	public void run() {
-		
+	public void process() throws Exception {
 		boolean isSolved = false;
 		do{
 			size = current.size();
 			isSolved = findCounterExample(current);
 			
+			if(!isSolved) 
+				throw new Exception("No solution found");
 			//System.out.println(">>Counter-example found on "+current.size()+"!\n"+current);
 			
 			if(size> MIN_USEFULL_SOLUTION){
@@ -105,8 +106,6 @@ public class ForwardMiner extends Miner{
 			current = current.extendRandom();
 		}
 		while(current.size() < 103);
-		
-		running = false;
 	}
 
 }

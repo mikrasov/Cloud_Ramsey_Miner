@@ -70,4 +70,22 @@ public class ControlBoard extends AppServer {
 		return out;
 	}
 	
+	private String ago(long timeDiff){
+
+		long seconds = timeDiff / 1000 % 60;
+		long minutes = timeDiff / (60 * 1000) % 60;
+		long hours = timeDiff / (60 * 60 * 1000) % 24;
+		long days = timeDiff / (24 * 60 * 60 * 1000);
+
+		
+		if(days > 0)
+			return days + " days";
+		else if(hours > 0)
+			return hours + " hours";
+		else if(minutes > 0)
+			return minutes + " minutes";
+		else
+			return seconds + " seconds";
+	}
+	
 }

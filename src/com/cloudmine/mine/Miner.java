@@ -15,12 +15,12 @@ public abstract class Miner implements Runnable{
 	
 	private final UUID id = UUID.randomUUID();
 	
+	protected String error;
 	protected boolean running = false;
 	protected int size = -1;
 	protected UUID task;
 	
 	public void mine(Graph graph){
-		running = true;
 		this.current = graph;
 		thread.start();
 	}
@@ -30,6 +30,7 @@ public abstract class Miner implements Runnable{
 		current = null;
 		size = -1;
 		task = null;
+		error = null;
 	}
 	
 	public void assign(Task task){
@@ -47,11 +48,27 @@ public abstract class Miner implements Runnable{
 	public Solution poll(){
 		return solutionQueue.poll();
 	}
+	
 	public UUID getId(){
 		return id;
 	}
 	
 	protected void sendSolution(boolean isSolved){
-		solutionQueue.add(new Solution(task,current.encodeAsJsonValue(), current.size(), isSolved));
+		Graph normalized = current.normalize();
+		solutionQueue.add(new Solution(task,normalized.encodeAsJsonValue(), current.size(), isSolved));
 	}
+	
+	@Override
+	public void run() {
+		running = true;
+		
+		try {
+			process();
+		} catch (Exception e) {
+			error = e.getMessage();
+		}
+		running = false;
+	}
+	
+	public abstract void process() throws Exception;
 }

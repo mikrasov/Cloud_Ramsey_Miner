@@ -15,9 +15,11 @@ public class Mine implements Runnable{
 	private static transient final int THREAD_TIMEOUT = 5*1000;
 	public static final String SERVER_IP = "http://localhost:8080";
 	
-	protected transient AppClient master = new AppClient(SERVER_IP);
+	protected final String server;
+	protected final boolean longTerm;
 	protected List<Solution> solutionsQueue = new LinkedList<>();
 	
+	protected transient AppClient master = new AppClient(SERVER_IP);
 	protected transient Gson gson = new Gson();
 	protected transient JsonParser jparse = new JsonParser();
 	protected transient Thread thread = new Thread(this);
@@ -25,7 +27,9 @@ public class Mine implements Runnable{
 	
 	protected  Miner[] miners;
 	
-	public Mine(int numMiners) {
+	public Mine(String server, int numMiners, boolean longTerm) {
+		this.server = server;
+		this.longTerm = longTerm;
 		miners = new Miner[numMiners];
 		for(int i=0; i < miners.length; i++)
 			miners[i] = new ForwardMiner();
@@ -75,7 +79,9 @@ public class Mine implements Runnable{
 				pollMiners();
 				contactServer();
 				Thread.sleep(THREAD_TIMEOUT);
-			} catch (Exception e) {}
+			} catch (Exception e) {
+				System.err.println("EXCEPTION: "+e.getMessage());
+			}
 		}
 	}
 
@@ -83,9 +89,8 @@ public class Mine implements Runnable{
 		thread.start();
 	}
 	
-	
 	public static void main(String[] args) {
-		Mine mine = new Mine(4);
+		Mine mine = new Mine("LOCAL_PC",4,true);
 		mine.start();
 	}
 }

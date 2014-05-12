@@ -10,6 +10,8 @@ public class Task {
 	private final UUID targetMiner;
 	private final Graph seed;
 	
+	private long lastSeen = System.currentTimeMillis();
+	
 	public Task(UUID targetMiner, Graph seed) {
 		this.targetMiner = targetMiner;
 		this.seed = seed;
@@ -25,6 +27,18 @@ public class Task {
 	
 	public Graph getSeed(){
 		return new Graph(seed);
+	}
+	
+	public void setLastSeen(long timeMillesecond){
+		this.lastSeen = timeMillesecond;
+	}
+	
+	public long lastSeen(){
+		return lastSeen;
+	}
+	
+	public long timeSinceLastSeen(){
+		return System.currentTimeMillis() - lastSeen;
 	}
 
 	@Override
