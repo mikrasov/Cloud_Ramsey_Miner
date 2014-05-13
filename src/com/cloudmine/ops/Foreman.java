@@ -7,6 +7,7 @@ import java.util.Map;
 import java.util.TreeMap;
 import java.util.UUID;
 
+import com.cloudmine.Configuration;
 import com.cloudmine.Graph;
 import com.cloudmine.Task;
 import com.cloudmine.http.AppServer;
@@ -42,11 +43,8 @@ public class Foreman extends AppServer {
 		
 		System.out.println("REQUEST: "+request);
 		
-		//String type = jRequest.get("type").getAsString();
-		boolean longTerm = jRequest.get("longTerm").getAsBoolean();
-		parseSolutions(jRequest.get("solutionsQueue").getAsJsonArray());
-
-		List<Task> taskList = processMiners(longTerm,jRequest.get("miners").getAsJsonArray() );
+		Configuration config = gson.fromJson(jRequest.get("configuration"), Configuration.class);
+		List<Task> taskList = processMiners(config.isLongTerm(),jRequest.get("miners").getAsJsonArray() );
 		
 		bank.save();
 
@@ -56,6 +54,7 @@ public class Foreman extends AppServer {
 		return responce.toString();
 	}
 	
+
 	private void parseSolutions(JsonArray jSolutions ){
 		System.out.println("> Solutions:");
 		for(JsonElement s: jSolutions){

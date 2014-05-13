@@ -3,6 +3,7 @@ package com.cloudmine.mine;
 import java.util.LinkedList;
 import java.util.List;
 
+import com.cloudmine.Configuration;
 import com.cloudmine.Task;
 import com.cloudmine.http.AppClient;
 import com.google.gson.Gson;
@@ -15,8 +16,8 @@ public class Mine implements Runnable{
 	private static transient final int THREAD_TIMEOUT = 5*1000;
 	public static final String SERVER_IP = "http://localhost:8080";
 	
-	protected final String type;
-	protected final boolean longTerm;
+	protected final Configuration configuration;
+	
 	protected List<Solution> solutionsQueue = new LinkedList<>();
 	
 	protected transient AppClient master = new AppClient(SERVER_IP);
@@ -27,10 +28,9 @@ public class Mine implements Runnable{
 	
 	protected  Miner[] miners;
 	
-	public Mine(String machineType, int numMiners, boolean longTerm) {
-		this.type = machineType;
-		this.longTerm = longTerm;
-		miners = new Miner[numMiners];
+	public Mine(Configuration config) {
+		this.configuration = config;
+		miners = new Miner[config.getNumCores()];
 		for(int i=0; i < miners.length; i++)
 			miners[i] = new ForwardMiner();
 	}
@@ -70,7 +70,6 @@ public class Mine implements Runnable{
 		}
 	}
 	
-	
 	@Override
 	public void run() {
 		while(true){		
@@ -88,8 +87,14 @@ public class Mine implements Runnable{
 		thread.start();
 	}
 	
+	public static final Configuration LOCAL 	 = new Configuration("LOCAL_PC",true,2);
+	public static final Configuration AWS 		 = new Configuration("AWS",true,1);
+	public static final Configuration AWS_BIG	 = new Configuration("AWS-BIG",true,2);
+	public static final Configuration EUCALYPTUS = new Configuration("EUCALYPTUS",true,1);
+	public static final Configuration CONDOR 	 = new Configuration("CONDOR",false,1);
+	
 	public static void main(String[] args) {
-		Mine mine = new Mine("LOCAL_PC",2,true);
+		Mine mine = new Mine(LOCAL);
 		mine.start();
 	}
 }
