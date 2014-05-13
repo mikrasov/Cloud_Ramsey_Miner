@@ -11,10 +11,13 @@ public class Graph implements Comparable<Graph>, Serializable{
 	private static transient final int SUB_GRAPH_SIZE = 6;
 	private static transient final Random rnd = new Random();
 	
+	private boolean solved = false;
+	private int id = -1;
+	private int originId = -1;
 	private transient boolean assigned = false;
 	
-	private BitSet matrix;
-	private int size; 
+	private final BitSet matrix;
+	private final int size; 
 	
 	
 	/**
@@ -31,8 +34,10 @@ public class Graph implements Comparable<Graph>, Serializable{
 	 * @param size of graph to create
 	 * @param graph represented as a single line binary string sequence
 	 */
-	public Graph (int size, String graph) {
+	public Graph (int size, String graph, int originId, boolean solved) {
 		this(size);
+		this.originId = originId;
+		this.solved = solved;
 		for(int i=0; i <graph.length(); i++){
 			if(graph.charAt(i) == '1')
 				matrix.set(i);	
@@ -45,7 +50,9 @@ public class Graph implements Comparable<Graph>, Serializable{
 	 */
 	public Graph (Graph toCopy) {
 		this(toCopy.size());
-	
+		this.id = toCopy.id;
+		this.originId = toCopy.originId;
+		this.solved = toCopy.solved;
 		for(int row=0; row < size; row++) {
 			for(int col=0; col < size; col++) {
 				set(row, col, toCopy.get(row,col));
@@ -177,7 +184,7 @@ public class Graph implements Comparable<Graph>, Serializable{
 	public Graph extend(){
 		int newSize = size +1;
 		Graph graph = new Graph(newSize);
-		
+		graph.originId = this.originId;
 		for(int row=0; row < size; row++) {
 			for(int col=0; col < size; col++) {
 				graph.set(row, col, get(row,col));
@@ -203,22 +210,7 @@ public class Graph implements Comparable<Graph>, Serializable{
 	}
 
 	
-	/**
-	 * Generate random graph as upper triangular matrix
-	 * @param size of graph to generate
-	 * @return generated graph
-	 */
-	public static Graph generateRandom(int size){
-		Graph g = new Graph(size);
-		
-		for(int row=0; row < size; row++) {
-			for(int col=row+1; col < size; col++) {
-				if(rnd.nextBoolean()) 
-					g.set(row,col, true);
-			}
-		}
-		return g;
-	}
+
 
 	/**
 	 * Checks to see if this graph is IsoMorph of another graph
@@ -267,11 +259,19 @@ public class Graph implements Comparable<Graph>, Serializable{
 			out+=  matrix.get(i)?1:0 ;
 		}
 		return out;
-	}
+	}	
 	
-	public void assign(){ assigned = true;}
-	public void unassigned(){assigned = false;}
-	public boolean isAssigned(){ return assigned;}
+	
+	
+	public int getId()			{ return id;}
+	public int getOriginId()	{ return originId; }
+	public void setId(int id)	{ this.id = id;}	
+	public void setAsOrigin()	{ this.originId = this.id;}	
+	public void assign()		{ assigned = true;}
+	public void unassigned()	{ assigned = false;}
+	public boolean isAssigned()	{ return assigned;}
+	public void setSolved(boolean isSolved) { this.solved = isSolved;}
+	public boolean isSolved()	{ return solved;}
 	
 	
 	//--------------------------------------------------------
@@ -357,4 +357,24 @@ public class Graph implements Comparable<Graph>, Serializable{
 		return new Graph(this);
 	}
 	
+	//--------------------------------------------------------
+	//					Static Methods
+	//--------------------------------------------------------
+	
+	/**
+	 * Generate random graph as upper triangular matrix
+	 * @param size of graph to generate
+	 * @return generated graph
+	 */
+	public static Graph generateRandom(int size){
+		Graph g = new Graph(size);
+		
+		for(int row=0; row < size; row++) {
+			for(int col=row+1; col < size; col++) {
+				if(rnd.nextBoolean()) 
+					g.set(row,col, true);
+			}
+		}
+		return g;
+	}
 }

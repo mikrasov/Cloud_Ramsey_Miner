@@ -5,6 +5,7 @@ import java.util.Map;
 import java.util.TreeMap;
 import java.util.UUID;
 
+import com.cloudmine.Graph;
 import com.cloudmine.Task;
 import com.cloudmine.http.AppServer;
 
@@ -25,12 +26,23 @@ public class ControlBoard extends AppServer {
 	public String process(String request) throws IOException {
 		String out = "<html>\n";
 		
+		out += genStats();
 		out += genBank();
 		out += genTaskList();
+		out += genSolutions();
 		
 		return out+"</html>";
 	}
 
+	private String genStats(){
+		String out = "<h1>Bank:</h1>";
+		out += "<ul>";
+		out += "Size: "+bank.size();
+		out += "</ul>";
+		return out;
+	}
+	
+	
 	private String genBank(){
 		String out = "<h1>Bank:</h1>";
 		out += "<table width='100%'>\n";
@@ -41,7 +53,7 @@ public class ControlBoard extends AppServer {
 			
 			out += "<td align='right'><strong>"+i+":</strong></td>";
 			
-			int sz = bank.get(i).size();
+			int sz = bank.getLevel(i).size();
 			out += "<td align='right'>"+(sz>0?sz:"-")+"</td>";
 			
 			
@@ -52,6 +64,30 @@ public class ControlBoard extends AppServer {
 			}
 		}
 		out += "</tr>\n";
+		out += "</table>\n";
+		return out;
+	}
+	
+	private String genSolutions(){
+		String out = "<h1>Solutions:</h1>";
+		out += "<table width='100%'>\n";
+		out += "<tr>";
+		out += "<td><strong>ID</strong></td>";
+		out += "<td><strong>Origin</strong></td>";
+		out += "<td><strong>Size</strong></td>";
+		out += "<td><strong>Assigned</strong></td>";
+		out += "<td><strong>Solved</strong></td>";
+		out += "</tr>\n";
+		
+		for(Graph g: bank){
+			out += "<tr>";
+			out += "<td>"+g.getId()+"</td>";
+			out += "<td>"+g.getOriginId()+"</td>";
+			out += "<td>"+g.size()+"</td>";
+			out += "<td>"+g.isAssigned()+"</td>";
+			out += "<td>"+g.isSolved()+"</td>";
+			out += "</tr>\n";
+		}
 		out += "</table>\n";
 		return out;
 	}

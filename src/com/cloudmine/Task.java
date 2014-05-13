@@ -41,6 +41,6 @@ public class Task {
 
 	@Override
 	public String toString() {
-		return taskId.toString()+" ("+seed.size()+")";
+		return taskId.toString()+" ("+seed.size()+") - ID:"+seed.getId()+" Origin:"+seed.getOriginId();
 	}
 }

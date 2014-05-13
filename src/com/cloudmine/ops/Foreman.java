@@ -49,8 +49,9 @@ public class Foreman extends AppServer {
 		List<Task> taskList = processMiners(longTerm,jRequest.get("miners").getAsJsonArray() );
 		
 		bank.save();
-		
+
 		JsonElement responce = gson.toJsonTree(taskList);
+		
 		System.out.println("RESPONCE: "+responce);
 		return responce.toString();
 	}
@@ -59,6 +60,7 @@ public class Foreman extends AppServer {
 		System.out.println("> Solutions:");
 		for(JsonElement s: jSolutions){
 			Graph solution = gson.fromJson(s, Solution.class).convertToGraph();
+			
 			bank.put(solution);
 			System.out.println("\tAdding : "+solution.encodeAsJsonValue());
 		}

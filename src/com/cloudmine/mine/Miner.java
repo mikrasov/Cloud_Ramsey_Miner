@@ -56,7 +56,8 @@ public abstract class Miner implements Runnable{
 	
 	protected void sendSolution(boolean isSolved){
 		Graph normalized = current.normalize();
-		solutionQueue.add(new Solution(task,normalized.encodeAsJsonValue(), current.size(), isSolved));
+		normalized.setSolved(isSolved);
+		solutionQueue.add(new Solution(task,normalized));
 	}
 	
 	@Override

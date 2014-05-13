@@ -92,6 +92,7 @@ public class ForwardMiner extends Miner{
 	public void process() throws Exception {
 		boolean isSolved = false;
 		do{
+			
 			size = current.size();
 			isSolved = findCounterExample(current);
 			
@@ -101,6 +102,7 @@ public class ForwardMiner extends Miner{
 			
 			if(size> MIN_USEFULL_SOLUTION){
 				sendSolution(isSolved);
+				System.out.println(" >> "+current.getOriginId());
 			}
 			
 			current = current.extendRandom();

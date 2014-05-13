@@ -67,13 +67,4 @@ public class AppClient {
 	      }
 	    }
 	  }
-	
-	public static void main(String[] args) {
-		AppClient client = new AppClient("http://localhost:8080");
-		Gson gson = new Gson();
-		
-		String s = client.post( gson.toJson(new Solution(UUID.randomUUID(), "10101", 8, true)) );
-		System.out.println(s);
-	}
-
 }
