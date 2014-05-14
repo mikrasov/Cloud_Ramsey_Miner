@@ -16,7 +16,7 @@ public class Operation {
 	protected ControlBoard control = new ControlBoard(bank, map);
 
 	public void load(){
-		System.out.print("Trying to load from file '"+Bank.BANK_FILENAME+"' : ");
+		System.out.print("> Trying to load from file '"+Bank.BANK_FILENAME+"' : ");
 		try {
 			bank.load();
 			System.out.println("File loaded");
@@ -27,12 +27,17 @@ public class Operation {
    
 	public void start() throws IOException{
 		foreman.start();
+		System.out.println("> Foreman Started on port: "+foreman.getPort());
 		control.start();
+		System.out.println("> ControlBoard Started on port: "+control.getPort());
+		
 	}
    
 	public static void main(String[] args) throws IOException {
 		Operation op = new Operation();
+		System.out.println("Starting Operation!");
 		op.load();
 		op.start();
+		System.out.println("---------------------------------\n");
 	}
 }

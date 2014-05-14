@@ -62,5 +62,8 @@ public abstract class AppServer implements Container {
 		} catch (IOException e) {}
 	}
 	
+	public int getPort(){
+		return port;
+	}
 	public abstract String process(String request) throws IOException;
 }
