@@ -31,22 +31,15 @@ public class Mine implements Runnable{
 		this.configuration = config;
 		master = new AppClient(config.getForeman());
 		
-		miners = new Miner[config.getNumCores()];
+		miners = new Miner[config.getNumMiners()];
 		for(int i=0; i < miners.length; i++)
-			miners[i] = new ForwardMiner();
+			miners[i] = new ForwardMiner(config.getMinUseful(), config.getMaxUseful());
 	}
 	
 	protected void contactServer() throws IOException{
-		String json = gson.toJson(this);
-		
-		//System.out.println("M REQUEST:"+json);
+		String json = gson.toJson(this);		
 		String responce = master.post(json);
-
-		//System.out.println("M RESPONCE:"+responce);
-		
 		JsonArray jTasks = jparse.parse(responce).getAsJsonArray();
-		System.out.println("M Tasks: "+jTasks);
-
 		
 		for(JsonElement t: jTasks){
 			Task task = gson.fromJson(t, Task.class);
@@ -54,7 +47,7 @@ public class Mine implements Runnable{
 			//Declare this as the origin
 			task.getSeed().setAsOrigin();
 			
-			System.out.println("Task "+task);
+			System.out.println("New Task "+task);
 			for(Miner m : miners)
 				m.assign(task);
 		}
@@ -98,12 +91,13 @@ public class Mine implements Runnable{
 
 	
 	public static void main(String[] args) {
-		Configuration config = Configuration.LOCAL;
+		Configuration config = Configuration.TARGET_PLATFORM;
 		Mine mine = new Mine(config);
 		System.out.println("Starting Mine (V."+config.getVersion()+")");
-		System.out.println("> Target: "+config.getForeman());
+		System.out.println(config);
+		
 		mine.start();
-		System.out.println("> Mine Started with "+mine.numMiners()+" miners");
+		
 		System.out.println("---------------------------------\n");
 	}
 }

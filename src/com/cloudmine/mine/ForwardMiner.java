@@ -5,8 +5,13 @@ import com.cloudmine.TabooList;
 
 public class ForwardMiner extends Miner{
 
-	private static final int MIN_USEFULL_SOLUTION = 40;
-
+	private final int minUseful, maxUseful;
+	
+	public ForwardMiner(int minUseful, int maxUseful){
+		this.maxUseful = maxUseful;
+		this.minUseful = minUseful;
+	}
+	
 	public boolean findCounterExample(Graph g){
 		TabooList taboo = new TabooList();
 		
@@ -100,13 +105,13 @@ public class ForwardMiner extends Miner{
 				throw new Exception("No solution found");
 			//System.out.println(">>Counter-example found on "+current.size()+"!\n"+current);
 			
-			if(size> MIN_USEFULL_SOLUTION){
+			if(size> minUseful){
 				sendSolution(isSolved);
 			}
 			
 			current = current.extendRandom();
 		}
-		while(current.size() < 103);
+		while(current.size() <= maxUseful);
 	}
 
 }
