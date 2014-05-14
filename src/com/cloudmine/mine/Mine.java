@@ -1,5 +1,6 @@
 package com.cloudmine.mine;
 
+import java.io.IOException;
 import java.util.LinkedList;
 import java.util.List;
 
@@ -13,14 +14,12 @@ import com.google.gson.JsonParser;
 
 public class Mine implements Runnable{
 
-	private static transient final int THREAD_TIMEOUT = 5*1000;
-	public static final String SERVER_IP = "http://localhost:8080";
 	
 	protected final Configuration configuration;
 	
 	protected List<Solution> solutionsQueue = new LinkedList<>();
 	
-	protected transient AppClient master = new AppClient(SERVER_IP);
+	protected transient AppClient master;;
 	protected transient Gson gson = new Gson();
 	protected transient JsonParser jparse = new JsonParser();
 	protected transient Thread thread = new Thread(this);
@@ -30,12 +29,14 @@ public class Mine implements Runnable{
 	
 	public Mine(Configuration config) {
 		this.configuration = config;
+		master = new AppClient(config.getForeman());
+		
 		miners = new Miner[config.getNumCores()];
 		for(int i=0; i < miners.length; i++)
 			miners[i] = new ForwardMiner();
 	}
 	
-	protected void contactServer(){
+	protected void contactServer() throws IOException{
 		String json = gson.toJson(this);
 		
 		//System.out.println("M REQUEST:"+json);
@@ -70,16 +71,23 @@ public class Mine implements Runnable{
 		}
 	}
 	
+	public int numMiners(){
+		return miners.length;
+	}
+	
 	@Override
 	public void run() {
 		while(true){		
 			try {
 				pollMiners();
 				contactServer();
-				Thread.sleep(THREAD_TIMEOUT);
 			} catch (Exception e) {
 				System.err.println("EXCEPTION: "+e.getMessage());
 			}
+			
+			try {
+				Thread.sleep(configuration.getReportingInterval());
+			} catch (InterruptedException e) {}
 		}
 	}
 
@@ -87,14 +95,15 @@ public class Mine implements Runnable{
 		thread.start();
 	}
 	
-	public static final Configuration LOCAL 	 = new Configuration("LOCAL_PC",true,2);
-	public static final Configuration AWS 		 = new Configuration("AWS",true,1);
-	public static final Configuration AWS_BIG	 = new Configuration("AWS-BIG",true,2);
-	public static final Configuration EUCALYPTUS = new Configuration("EUCALYPTUS",true,1);
-	public static final Configuration CONDOR 	 = new Configuration("CONDOR",false,1);
+
 	
 	public static void main(String[] args) {
-		Mine mine = new Mine(LOCAL);
+		Configuration config = Configuration.LOCAL;
+		Mine mine = new Mine(config);
+		System.out.println("Starting Mine (V."+config.getVersion()+")");
+		System.out.println("> Target: "+config.getForeman());
 		mine.start();
+		System.out.println("> Mine Started with "+mine.numMiners()+" miners");
+		System.out.println("---------------------------------\n");
 	}
 }

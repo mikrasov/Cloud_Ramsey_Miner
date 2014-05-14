@@ -2,6 +2,7 @@ package com.cloudmine.http;
 
 import java.io.BufferedReader;
 import java.io.DataOutputStream;
+import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.net.HttpURLConnection;
@@ -19,11 +20,11 @@ public class AppClient {
 		this.targetURL = targetURL;
 	}
 
-	public String post(String urlParameters) {
+	public String post(String urlParameters) throws IOException {
 	    URL url;
 	    HttpURLConnection connection = null;  
-	    try {
-	      //Create connection
+
+	    //Create connection
 	      url = new URL(targetURL);
 	      connection = (HttpURLConnection)url.openConnection();
 	      connection.setRequestMethod("POST");
@@ -53,18 +54,12 @@ public class AppClient {
 	        response.append('\r');
 	      }
 	      rd.close();
-	      return response.toString();
-
-	    } catch (Exception e) {
-
-	      e.printStackTrace();
-	      return null;
-
-	    } finally {
 
 	      if(connection != null) {
 	        connection.disconnect(); 
 	      }
-	    }
+
+	      return response.toString();
+	    
 	  }
 }
