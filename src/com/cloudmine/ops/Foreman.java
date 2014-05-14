@@ -60,6 +60,12 @@ public class Foreman extends AppServer {
 		for(JsonElement s: jSolutions){
 			Graph solution = gson.fromJson(s, Solution.class).convertToGraph();
 			
+			//Send this  to api
+			if(solution.size() > 102){
+				String jsonSolution = solution.encodeAsJsonValue();
+				//TODO: ADD API CALLL HERE
+			}
+			
 			bank.put(solution);
 			System.out.println("\tAdding : "+solution.encodeAsJsonValue());
 		}
