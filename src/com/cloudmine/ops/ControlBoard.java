@@ -5,6 +5,7 @@ import java.util.Map;
 import java.util.TreeMap;
 import java.util.UUID;
 
+import com.cloudmine.Configuration;
 import com.cloudmine.Graph;
 import com.cloudmine.Task;
 import com.cloudmine.http.AppServer;
@@ -35,10 +36,9 @@ public class ControlBoard extends AppServer {
 	}
 
 	private String genStats(){
-		String out = "<h1>Bank:</h1>";
-		out += "<ul>";
-		out += "Size: "+bank.size();
-		out += "</ul>";
+		String out = "<h1>Stats :</h1>";
+		out += "<ul>Version: "+Configuration.VERSION+"</ul>";
+		out += "<ul>Bank Size: "+bank.size()+"</ul>";
 		return out;
 	}
 	

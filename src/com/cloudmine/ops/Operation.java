@@ -5,6 +5,7 @@ import java.util.Map;
 import java.util.UUID;
 import java.util.concurrent.ConcurrentHashMap;
 
+import com.cloudmine.Configuration;
 import com.cloudmine.Task;
 
 public class Operation {
@@ -35,7 +36,7 @@ public class Operation {
    
 	public static void main(String[] args) throws IOException {
 		Operation op = new Operation();
-		System.out.println("Starting Operation!");
+		System.out.println("Starting Operation (V."+Configuration.VERSION+")");
 		op.load();
 		op.start();
 		System.out.println("---------------------------------\n");

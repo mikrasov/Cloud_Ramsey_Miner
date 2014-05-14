@@ -2,7 +2,10 @@ package com.cloudmine;
 
 public class Configuration {
 
+	public final static transient String VERSION = "0.1";
+	
 	protected final String type;
+	protected final String version;
 	protected final boolean longTerm;
 	protected final int	numMiners;
 
@@ -11,6 +14,7 @@ public class Configuration {
 		this.type = type;
 		this.longTerm = longTerm;
 		this.numMiners = numMiners;
+		this.version = VERSION;
 	}
 
 	public String getType() {
