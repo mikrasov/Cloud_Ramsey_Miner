@@ -25,6 +25,6 @@ public class Solution {
 		
 	@Override
 	public String toString() {
-		return graph.encodeAsJsonValue();
+		return graph.toString();
 	}
 }

@@ -11,6 +11,7 @@ import com.cloudmine.Configuration;
 import com.cloudmine.Graph;
 import com.cloudmine.Task;
 import com.cloudmine.http.AppServer;
+import com.cloudmine.mine.Miner;
 import com.cloudmine.mine.Solution;
 import com.google.gson.Gson;
 import com.google.gson.JsonArray;
@@ -54,11 +55,8 @@ public class Foreman extends AppServer {
 	private void parseSolutions(JsonArray jSolutions ){
 		System.out.println("> Solutions:");
 		for(JsonElement s: jSolutions){
-			System.out.println(" @ TRY PARSING");
 			Solution solution = gson.fromJson(s, Solution.class);
 			Graph graph = solution.getGraph();
-			
-			System.out.println(" @ PARSING "+graph);
 			
 			//Send this  to api
 			if(graph.size() > 102){
@@ -75,19 +73,28 @@ public class Foreman extends AppServer {
 		List<Task> taskList = new LinkedList<>();
 		System.out.println("> Miners:");
 		for(JsonElement m: jMiners){
-			JsonObject jminer = m.getAsJsonObject();
-			UUID minerId = UUID.fromString(jminer.get("id").getAsString());
-			boolean running = jminer.get("running").getAsBoolean();
+			Miner miner = gson.fromJson(m, Miner.class);
 			
 			System.out.println("\t"+m);
 			
-			if(!running){
+			if(miner.hasTask() && activeTasks.containsKey(miner.getTask())){
+				activeTasks.get(miner.getTask()).justSeen();
+			}
+			else{
+				//TODO: Logic for what happens when a miner is working on a task the server knows nothing about
+			}
+				
+			if(!miner.isRunning()){
 				Graph bestAvailable  = bank.getBest(longTerm?Configuration.SLOW_CUTOFF:Configuration.FAST_CUTOFF);
-				Task task = assign(minerId, bestAvailable);
-				taskList.add(task);
+				Task task = assign(miner.getId(), bestAvailable);
+				
+				taskList.add(task); //To sent to server
 				
 				System.out.println("\t ^ ASSIGNING: "+ task);
 			}
+			
+			
+			
 			
 		}
 		return taskList;
@@ -95,7 +102,9 @@ public class Foreman extends AppServer {
 	
 	private Task assign(UUID targetMiner, Graph seed){
 		Task task = new Task(targetMiner, seed);
+		
 		activeTasks.put(task.getTaskId(), task);
+		
 		task.getSeed().assign();
 		return task;
 	}

@@ -7,7 +7,7 @@ import java.util.concurrent.ConcurrentLinkedQueue;
 import com.cloudmine.Graph;
 import com.cloudmine.Task;
 
-public abstract class Miner implements Runnable{
+public class Miner implements Runnable{
 
 	protected transient Thread thread = new Thread(this);
 	protected transient Graph current;
@@ -58,7 +58,7 @@ public abstract class Miner implements Runnable{
 		Graph normalized = current.normalize();
 		normalized.setSolved(isSolved);
 		solutionQueue.add(new Solution(task,normalized));
-		System.out.println(" # SOLUTION FOUND " + normalized);
+		//System.out.println(" # SOLUTION FOUND " + normalized);
 	}
 	
 	@Override
@@ -72,6 +72,14 @@ public abstract class Miner implements Runnable{
 		}
 		running = false;
 	}
-	
-	public abstract void process() throws Exception;
+		
+	public String getError() 	{ return error; }
+	public boolean isRunning()	{ return running; }
+	public int getTaskSize() 	{ return size; }
+	public UUID getTask() 		{ return task; }
+	public boolean hasTask() 	{ return task != null; }
+
+	public void process() throws Exception{
+		
+	}
 }

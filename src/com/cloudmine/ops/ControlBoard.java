@@ -93,11 +93,12 @@ public class ControlBoard extends AppServer {
 	private String genTaskList(){
 		String out = "<h1>Tasks:</h1>";
 		out += "<table width='100%'>\n";
-		out += "<tr><td>Task ID</td></tr>";
+		out += "<tr><td>Task ID</td><td>LastSeen</td></tr>";
 		for(UUID k: map.keySet()){
 			out += "<tr>";
 			Task t = map.get(k);			
-			out += "<td align='right'><strong>"+t.getTaskId()+":</strong></td>";
+			out += "<td><strong>"+t.getTaskId()+":</strong></td>";
+			out += "<td><strong>"+ago(t.timeSinceLastSeen())+" ago</strong></td>";
 			out += "</tr>\n";
 		}
 		out += "</table>\n";
@@ -117,9 +118,9 @@ public class ControlBoard extends AppServer {
 		else if(hours > 0)
 			return hours + " hours";
 		else if(minutes > 0)
-			return minutes + " minutes";
+			return minutes + " min";
 		else
-			return seconds + " seconds";
+			return seconds + " sec";
 	}
 	
 }
