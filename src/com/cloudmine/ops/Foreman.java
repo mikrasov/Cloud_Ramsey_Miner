@@ -20,11 +20,6 @@ import com.google.gson.JsonParser;
 
 public class Foreman extends AppServer {
 
-	public static final int DEAFAULT_PORT = 8080;
-	
-	public static final int FAST_CUTOFF = 50;
-	public static final int SLOW_CUTOFF = 102;
-	
 	protected final JsonParser jparse = new JsonParser();
 	protected final Gson gson = new Gson();
 	
@@ -32,7 +27,7 @@ public class Foreman extends AppServer {
 	protected Map<UUID, Task> activeTasks = new TreeMap<>();
 	
 	public Foreman(Bank bank, Map<UUID, Task> map) {
-		super(DEAFAULT_PORT, AppServer.CONTENT_JSON);
+		super(Configuration.FOREMAN_PORT, AppServer.CONTENT_JSON);
 		this.bank = bank;
 		this.activeTasks = map;
 	}
@@ -82,7 +77,7 @@ public class Foreman extends AppServer {
 			System.out.println("\t"+m);
 			
 			if(!running){
-				Graph bestAvailable  = bank.getBest(longTerm?SLOW_CUTOFF:FAST_CUTOFF);
+				Graph bestAvailable  = bank.getBest(longTerm?Configuration.SLOW_CUTOFF:Configuration.FAST_CUTOFF);
 				Task task = assign(minerId, bestAvailable);
 				taskList.add(task);
 				

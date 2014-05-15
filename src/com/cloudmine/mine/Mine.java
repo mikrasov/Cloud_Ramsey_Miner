@@ -29,7 +29,7 @@ public class Mine implements Runnable{
 	
 	public Mine(Configuration config) {
 		this.configuration = config;
-		master = new AppClient(config.getForeman());
+		master = new AppClient(config.getForemanAdress());
 		
 		miners = new Miner[config.getNumMiners()];
 		for(int i=0; i < miners.length; i++)
@@ -88,10 +88,20 @@ public class Mine implements Runnable{
 		thread.start();
 	}
 	
-
-	
 	public static void main(String[] args) {
-		Configuration config = Configuration.TARGET_PLATFORM;
+		Configuration config = null;
+		
+		if(args.length >= 1)
+			config = Configuration.get(args[0]);
+		
+		if(config == null){
+			System.out.println("Usage Mine ["+Configuration.getUsage()+"] {IP}");
+			System.exit(0);
+		}
+		
+		if(args.length >= 2)
+			config.setAdditionalInfo(args[1]);
+		
 		Mine mine = new Mine(config);
 		System.out.println("Starting Mine (V."+config.getVersion()+")");
 		System.out.println(config);

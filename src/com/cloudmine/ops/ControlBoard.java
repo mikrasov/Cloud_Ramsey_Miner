@@ -12,13 +12,11 @@ import com.cloudmine.http.AppServer;
 
 public class ControlBoard extends AppServer {
 
-	public static final int DEAFAULT_PORT = 80;
-	
 	protected Bank bank = new Bank();
 	protected Map<UUID, Task> map = new TreeMap<>();
 	
 	public ControlBoard(Bank bank, Map<UUID, Task> map) {
-		super(DEAFAULT_PORT, AppServer.CONTENT_HTML);
+		super(Configuration.CONTROL_BOARD_PORT, AppServer.CONTENT_HTML);
 		this.bank = bank;
 		this.map = map;
 	}
