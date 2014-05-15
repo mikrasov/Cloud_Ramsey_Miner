@@ -3,6 +3,7 @@ package com.cloudmine;
 import java.io.Serializable;
 import java.util.BitSet;
 import java.util.Random;
+import java.util.UUID;
 
 public class Graph implements Comparable<Graph>, Serializable{
 	
@@ -12,8 +13,8 @@ public class Graph implements Comparable<Graph>, Serializable{
 	private static transient final Random rnd = new Random();
 	
 	private boolean solved = false;
-	private int id = -1;
-	private int originId = -1;
+	private UUID id;
+	private UUID originId;
 	private transient boolean assigned = false;
 	
 	private final BitSet matrix;
@@ -26,6 +27,7 @@ public class Graph implements Comparable<Graph>, Serializable{
 	 */
 	public Graph (int size) {
 		this.size = size;
+		this.id = UUID.randomUUID();
 		matrix = new BitSet(size*size);
 	}
 	
@@ -34,7 +36,7 @@ public class Graph implements Comparable<Graph>, Serializable{
 	 * @param size of graph to create
 	 * @param graph represented as a single line binary string sequence
 	 */
-	public Graph (int size, String graph, int originId, boolean solved) {
+	public Graph (int size, String graph, UUID originId, boolean solved) {
 		this(size);
 		this.originId = originId;
 		this.solved = solved;
@@ -53,6 +55,7 @@ public class Graph implements Comparable<Graph>, Serializable{
 		this.id = toCopy.id;
 		this.originId = toCopy.originId;
 		this.solved = toCopy.solved;
+		this.assigned = toCopy.assigned;
 		for(int row=0; row < size; row++) {
 			for(int col=0; col < size; col++) {
 				set(row, col, toCopy.get(row,col));
@@ -184,7 +187,7 @@ public class Graph implements Comparable<Graph>, Serializable{
 	public Graph extend(){
 		int newSize = size +1;
 		Graph graph = new Graph(newSize);
-		graph.originId = this.originId;
+		graph.originId = this.id;
 		for(int row=0; row < size; row++) {
 			for(int col=0; col < size; col++) {
 				graph.set(row, col, get(row,col));
@@ -263,10 +266,8 @@ public class Graph implements Comparable<Graph>, Serializable{
 	
 	
 	
-	public int getId()			{ return id;}
-	public int getOriginId()	{ return originId; }
-	public void setId(int id)	{ this.id = id;}	
-	public void setAsOrigin()	{ this.originId = this.id;}	
+	public UUID getId()			{ return id;}
+	public UUID getOriginId()	{ return originId; }
 	public void assign()		{ assigned = true;}
 	public void unassigned()	{ assigned = false;}
 	public boolean isAssigned()	{ return assigned;}
@@ -305,11 +306,7 @@ public class Graph implements Comparable<Graph>, Serializable{
 		}
 	}
 	
-	//--------------------------------------------------------
-	//				Overide Basic Methods
-	//--------------------------------------------------------
-	@Override
-	public String toString() {		
+	public String asPrettyTable() {		
 		String out ="Graph ("+size+") "+matrix.cardinality()+"/"+matrix.size()+"\n";
 		for(int row=0; row < size; row++) {
 			out += " |";
@@ -320,6 +317,14 @@ public class Graph implements Comparable<Graph>, Serializable{
 			out += "\n";
 		}
 		return out;
+	}
+	
+	//--------------------------------------------------------
+	//				Overide Basic Methods
+	//--------------------------------------------------------
+	@Override
+	public String toString() {		
+		return "Graph ("+size+") "+id+" "+encodeAsJsonValue();
 	}
 	
 	@Override

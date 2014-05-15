@@ -43,10 +43,7 @@ public class Mine implements Runnable{
 		
 		for(JsonElement t: jTasks){
 			Task task = gson.fromJson(t, Task.class);
-			
-			//Declare this as the origin
-			task.getSeed().setAsOrigin();
-			
+		
 			System.out.println("New Task "+task);
 			for(Miner m : miners)
 				m.assign(task);

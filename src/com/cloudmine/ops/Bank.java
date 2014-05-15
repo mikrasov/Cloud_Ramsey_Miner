@@ -9,9 +9,12 @@ import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
 import java.io.Serializable;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.Iterator;
 import java.util.LinkedList;
 import java.util.List;
+import java.util.Map;
+import java.util.UUID;
 
 import com.cloudmine.Graph;
 
@@ -29,7 +32,7 @@ public class Bank implements Serializable, Iterable<Graph>{
 
 	@SuppressWarnings("unchecked")
 	private transient List<Graph>[] hierarchy = new List[GRAPH_LESS_THAN];
-	private ArrayList<Graph> list = new ArrayList<>();
+	private Map<UUID,Graph> map = new HashMap<>();
 	
 	public Bank() {
 		for(int i=0; i<hierarchy.length; i++){
@@ -43,8 +46,7 @@ public class Bank implements Serializable, Iterable<Graph>{
 		//Do Isomorph check
 		for(Graph a: set) if(a.isIsomorphOf(example)) return false;
 
-		example.setId(list.size());
-		list.add(example);
+		map.put(example.getId(),example);
 		hierarchy[example.size()].add(example);
 		
 		return true;
@@ -74,7 +76,7 @@ public class Bank implements Serializable, Iterable<Graph>{
 	}
 
 	public int size(){
-		return list.size();
+		return map.size();
 	}
 	
 	public int numLevels(){
@@ -83,7 +85,7 @@ public class Bank implements Serializable, Iterable<Graph>{
 	
 	public synchronized void save() throws IOException{
 		ObjectOutputStream out = new ObjectOutputStream(new FileOutputStream(bankTempFile));
-		out.writeObject(list);
+		out.writeObject(map);
 		out.close();
 		
 		//Move temp to permanent
@@ -95,9 +97,9 @@ public class Bank implements Serializable, Iterable<Graph>{
 	public void load() throws FileNotFoundException, IOException, ClassNotFoundException{
 		ObjectInputStream in = new ObjectInputStream(new FileInputStream(bankFile));
 		
-		list = (ArrayList<Graph>)in.readObject();
+		map = (HashMap<UUID,Graph>)in.readObject();
 		
-		for(Graph g: list)
+		for(Graph g: map.values())
 			hierarchy[g.size()].add(g);
 			
 		in.close();
@@ -105,7 +107,7 @@ public class Bank implements Serializable, Iterable<Graph>{
 
 	@Override
 	public Iterator<Graph> iterator() {
-		return list.iterator();
+		return map.values().iterator();
 	}
 	
 }

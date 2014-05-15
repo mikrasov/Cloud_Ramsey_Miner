@@ -58,6 +58,7 @@ public abstract class Miner implements Runnable{
 		Graph normalized = current.normalize();
 		normalized.setSolved(isSolved);
 		solutionQueue.add(new Solution(task,normalized));
+		System.out.println(" # SOLUTION FOUND " + normalized);
 	}
 	
 	@Override

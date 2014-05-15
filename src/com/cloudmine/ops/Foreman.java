@@ -41,6 +41,7 @@ public class Foreman extends AppServer {
 		Configuration config = gson.fromJson(jRequest.get("configuration"), Configuration.class);
 		List<Task> taskList = processMiners(config.isLongTerm(),jRequest.get("miners").getAsJsonArray() );
 		
+		parseSolutions(jRequest.get("solutionsQueue").getAsJsonArray());
 		bank.save();
 
 		JsonElement responce = gson.toJsonTree(taskList);
@@ -53,16 +54,20 @@ public class Foreman extends AppServer {
 	private void parseSolutions(JsonArray jSolutions ){
 		System.out.println("> Solutions:");
 		for(JsonElement s: jSolutions){
-			Graph solution = gson.fromJson(s, Solution.class).convertToGraph();
+			System.out.println(" @ TRY PARSING");
+			Solution solution = gson.fromJson(s, Solution.class);
+			Graph graph = solution.getGraph();
+			
+			System.out.println(" @ PARSING "+graph);
 			
 			//Send this  to api
-			if(solution.size() > 102){
-				String jsonSolution = solution.encodeAsJsonValue();
+			if(graph.size() > 102){
+				String jsonSolution = graph.encodeAsJsonValue();
 				//TODO: ADD API CALLL HERE
 			}
 			
-			bank.put(solution);
-			System.out.println("\tAdding : "+solution.encodeAsJsonValue());
+			bank.put(graph);
+			System.out.println("\tAdding : "+graph.encodeAsJsonValue());
 		}
 	}
 	
