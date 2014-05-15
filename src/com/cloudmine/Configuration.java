@@ -13,7 +13,7 @@ public class Configuration {
 	public static final String	VERSION = "0.1";
 	public static final int 	LONG_REMORTING_INTERVAL = 10*60*1000;
 	public static final int 	SHORT_REMORTING_INTERVAL = 1*60*1000;
-	public static final String	FOREMAN_ADDRESS = "http://128.111.84.163:"+FOREMAN_PORT;
+	public static final String	FOREMAN_ADDRESS = "http://128.111.84.163";
 	public static final int 	MIN_USEFULL_SOLUTION = 50;
 	public static final int 	MAX_USEFULL_SOLUTION = 101;
 	
