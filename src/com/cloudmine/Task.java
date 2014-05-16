@@ -2,16 +2,21 @@ package com.cloudmine;
 
 import java.util.UUID;
 
+import com.cloudmine.mine.Mine;
+import com.cloudmine.mine.Miner;
+
 public class Task {
 
 	private final UUID taskId = UUID.randomUUID();
-	private final UUID targetMiner;
+	private final UUID targetMinerId;
 	private final Graph seed;
 	
 	private transient long lastSeen=0;
+	private transient Configuration targetMine;
 	
-	public Task(UUID targetMiner, Graph seed) {
-		this.targetMiner = targetMiner;
+	public Task(Configuration targetMine, UUID targetMiner, Graph seed) {
+		this.targetMine = targetMine;
+		this.targetMinerId = targetMiner;
 		this.seed = seed;
 	}
 	
@@ -20,9 +25,13 @@ public class Task {
 	}
 	
 	public UUID getTargetMiner(){
-		return targetMiner;
+		return targetMinerId;
 	}
 	
+	public Configuration getTargetMine(){
+		return targetMine;
+	}
+
 	public Graph getSeed(){
 		return seed;
 	}

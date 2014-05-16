@@ -40,7 +40,7 @@ public class Foreman extends AppServer {
 		System.out.println("REQUEST: "+request);
 		
 		Configuration config = gson.fromJson(jRequest.get("configuration"), Configuration.class);
-		List<Task> taskList = processMiners(config.isLongTerm(),jRequest.get("miners").getAsJsonArray() );
+		List<Task> taskList = processMiners(config,jRequest.get("miners").getAsJsonArray() );
 		
 		parseSolutions(jRequest.get("solutionsQueue").getAsJsonArray());
 		bank.save();
@@ -69,7 +69,7 @@ public class Foreman extends AppServer {
 		}
 	}
 	
-	private List<Task> processMiners(boolean longTerm, JsonArray jMiners){
+	private List<Task> processMiners(Configuration mine, JsonArray jMiners){
 		List<Task> taskList = new LinkedList<>();
 		System.out.println("> Miners:");
 		for(JsonElement m: jMiners){
@@ -85,8 +85,8 @@ public class Foreman extends AppServer {
 			}
 				
 			if(!miner.isRunning()){
-				Graph bestAvailable  = bank.getBest(longTerm?Configuration.SLOW_CUTOFF:Configuration.FAST_CUTOFF);
-				Task task = assign(miner.getId(), bestAvailable);
+				Graph bestAvailable  = bank.getBest(mine.isLongTerm()?Configuration.SLOW_CUTOFF:Configuration.FAST_CUTOFF);
+				Task task = assign(mine,miner.getId(), bestAvailable);
 				
 				taskList.add(task); //To sent to server
 				
@@ -100,8 +100,8 @@ public class Foreman extends AppServer {
 		return taskList;
 	}
 	
-	private Task assign(UUID targetMiner, Graph seed){
-		Task task = new Task(targetMiner, seed);
+	private Task assign(Configuration mine, UUID targetMiner, Graph seed){
+		Task task = new Task(mine, targetMiner, seed);
 		
 		activeTasks.put(task.getTaskId(), task);
 		

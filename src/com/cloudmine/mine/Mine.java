@@ -85,6 +85,10 @@ public class Mine implements Runnable{
 		thread.start();
 	}
 	
+	public Configuration getConfiguration(){
+		return configuration;
+	}
+	
 	public static void main(String[] args) {
 		Configuration config = null;
 		

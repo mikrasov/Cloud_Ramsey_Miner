@@ -54,7 +54,6 @@ public class ControlBoard extends AppServer {
 			int sz = bank.getLevel(i).size();
 			out += "<td align='right'>"+(sz>0?sz:"-")+"</td>";
 			
-			
 			n++;
 			if(n > 10){
 				n = 0;
@@ -93,12 +92,22 @@ public class ControlBoard extends AppServer {
 	private String genTaskList(){
 		String out = "<h1>Tasks:</h1>";
 		out += "<table width='100%'>\n";
-		out += "<tr><td>Task ID</td><td>LastSeen</td></tr>";
+		out += "<tr>";
+		out += "<td><strong>Task ID</strong></td>";
+		out += "<td><strong>LastSeen</strong></td>";
+		out += "<td><strong>Type</strong></td>";
+		out += "<td><strong>Additional</strong></td>";
+		out += "<td><strong>Version</strong></td>";
+		out += "</tr>";
 		for(UUID k: map.keySet()){
 			out += "<tr>";
-			Task t = map.get(k);			
-			out += "<td><strong>"+t.getTaskId()+":</strong></td>";
-			out += "<td><strong>"+ago(t.timeSinceLastSeen())+" ago</strong></td>";
+			Task t = map.get(k);	
+			Configuration c = t.getTargetMine();
+			out += "<td>"+t.getTaskId()+":</td>";
+			out += "<td>"+ago(t.timeSinceLastSeen())+"</td>";
+			out += "<td>"+c.getType()+"</td>";
+			out += "<td>"+c.getAdditionalInfo()+"</td>";
+			out += "<td>"+c.getVersion()+"</td>";
 			out += "</tr>\n";
 		}
 		out += "</table>\n";
@@ -106,21 +115,21 @@ public class ControlBoard extends AppServer {
 	}
 	
 	private String ago(long timeDiff){
-
 		long seconds = timeDiff / 1000 % 60;
 		long minutes = timeDiff / (60 * 1000) % 60;
 		long hours = timeDiff / (60 * 60 * 1000) % 24;
 		long days = timeDiff / (24 * 60 * 60 * 1000);
 
-		
-		if(days > 0)
-			return days + " days";
+		if(days > 16000 )
+			return "never";
+		else if(days > 0)
+			return days + " days ago";
 		else if(hours > 0)
-			return hours + " hours";
+			return hours + " hours ago";
 		else if(minutes > 0)
-			return minutes + " min";
+			return minutes + " min ago";
 		else
-			return seconds + " sec";
+			return seconds + " sec ago";
 	}
 	
 }
