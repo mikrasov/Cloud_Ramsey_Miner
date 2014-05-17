@@ -1,9 +1,11 @@
 package com.cloudmine.mine;
 
+import java.io.IOException;
 import java.util.LinkedList;
 import java.util.List;
 
-import com.cloudmine.foreman.Task;
+import com.cloudmine.Configuration;
+import com.cloudmine.Task;
 import com.cloudmine.http.AppClient;
 import com.google.gson.Gson;
 import com.google.gson.JsonArray;
@@ -12,12 +14,12 @@ import com.google.gson.JsonParser;
 
 public class Mine implements Runnable{
 
-	private static transient final int THREAD_TIMEOUT = 5*1000;
-	public static final String SERVER_IP = "http://localhost:8080";
 	
-	protected transient AppClient master = new AppClient(SERVER_IP);
+	protected final Configuration configuration;
+	
 	protected List<Solution> solutionsQueue = new LinkedList<>();
 	
+	protected transient AppClient master;;
 	protected transient Gson gson = new Gson();
 	protected transient JsonParser jparse = new JsonParser();
 	protected transient Thread thread = new Thread(this);
@@ -25,34 +27,26 @@ public class Mine implements Runnable{
 	
 	protected  Miner[] miners;
 	
-	public Mine(int numMiners) {
-		miners = new Miner[numMiners];
+	public Mine(Configuration config) {
+		this.configuration = config;
+		master = new AppClient(config.getForemanAdress());
+		
+		miners = new Miner[config.getNumMiners()];
 		for(int i=0; i < miners.length; i++)
-			miners[i] = new ForwardMiner();
+			miners[i] = new ForwardMiner(config.getMinUseful(), config.getMaxUseful());
 	}
 	
-	
-	protected void contactServer(){
-		String json = gson.toJson(this);
-		
-		//System.out.println("M REQUEST:"+json);
+	protected void contactServer() throws IOException{
+		String json = gson.toJson(this);		
 		String responce = master.post(json);
-		
-		
-		System.out.println("M RESPONCE:"+responce);
-		
 		JsonArray jTasks = jparse.parse(responce).getAsJsonArray();
-		System.out.println("M Tasks: "+jTasks);
-
 		
 		for(JsonElement t: jTasks){
 			Task task = gson.fromJson(t, Task.class);
-			
+		
+			System.out.println("New Task "+task);
 			for(Miner m : miners)
 				m.assign(task);
-			
-				
-			System.out.println("\tproc : "+task);
 		}
 		solutionsQueue.clear();
 	}
@@ -67,6 +61,9 @@ public class Mine implements Runnable{
 		}
 	}
 	
+	public int numMiners(){
+		return miners.length;
+	}
 	
 	@Override
 	public void run() {
@@ -74,8 +71,13 @@ public class Mine implements Runnable{
 			try {
 				pollMiners();
 				contactServer();
-				Thread.sleep(THREAD_TIMEOUT);
-			} catch (Exception e) {}
+			} catch (Exception e) {
+				System.err.println("EXCEPTION: "+e.getMessage());
+			}
+			
+			try {
+				Thread.sleep(configuration.getReportingInterval());
+			} catch (InterruptedException e) {}
 		}
 	}
 
@@ -83,9 +85,30 @@ public class Mine implements Runnable{
 		thread.start();
 	}
 	
+	public Configuration getConfiguration(){
+		return configuration;
+	}
 	
 	public static void main(String[] args) {
-		Mine mine = new Mine(4);
+		Configuration config = null;
+		
+		if(args.length >= 1)
+			config = Configuration.get(args[0]);
+		
+		if(config == null){
+			System.out.println("Usage Mine ["+Configuration.getUsage()+"] {IP}");
+			System.exit(0);
+		}
+		
+		if(args.length >= 2)
+			config.setAdditionalInfo(args[1]);
+		
+		Mine mine = new Mine(config);
+		System.out.println("Starting Mine (V."+config.getVersion()+")");
+		System.out.println(config);
+		
 		mine.start();
+		
+		System.out.println("---------------------------------\n");
 	}
 }

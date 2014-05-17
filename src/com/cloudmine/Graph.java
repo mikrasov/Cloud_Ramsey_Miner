@@ -3,24 +3,31 @@ package com.cloudmine;
 import java.io.Serializable;
 import java.util.BitSet;
 import java.util.Random;
+import java.util.UUID;
 
 public class Graph implements Comparable<Graph>, Serializable{
 	
 	private static final long serialVersionUID = 5253025260499448857L;
 	
-	private static transient  final int SUB_GRAPH_SIZE = 6;
+	private static transient final int SUB_GRAPH_SIZE = 6;
 	private static transient final Random rnd = new Random();
 	
-	//private final UUID uuid = UUID.randomUUID();
-	private BitSet matrix;
-	private int size; 
-		
+	private boolean solved = false;
+	private UUID id;
+	private UUID originId;
+	private transient boolean assigned = false;
+	
+	private final BitSet matrix;
+	private final int size; 
+	
+	
 	/**
 	 * Create new matrix based Graph representation (zero filled)
 	 * @param size of graph to create
 	 */
 	public Graph (int size) {
 		this.size = size;
+		this.id = UUID.randomUUID();
 		matrix = new BitSet(size*size);
 	}
 	
@@ -29,8 +36,10 @@ public class Graph implements Comparable<Graph>, Serializable{
 	 * @param size of graph to create
 	 * @param graph represented as a single line binary string sequence
 	 */
-	public Graph (int size, String graph) {
+	public Graph (int size, String graph, UUID originId, boolean solved) {
 		this(size);
+		this.originId = originId;
+		this.solved = solved;
 		for(int i=0; i <graph.length(); i++){
 			if(graph.charAt(i) == '1')
 				matrix.set(i);	
@@ -42,10 +51,14 @@ public class Graph implements Comparable<Graph>, Serializable{
 	 * @param toCopy
 	 */
 	public Graph (Graph toCopy) {
-		Graph copy = new Graph(toCopy.size());
+		this(toCopy.size());
+		this.id = toCopy.id;
+		this.originId = toCopy.originId;
+		this.solved = toCopy.solved;
+		this.assigned = toCopy.assigned;
 		for(int row=0; row < size; row++) {
 			for(int col=0; col < size; col++) {
-				copy.set(row, col, get(row,col));
+				set(row, col, toCopy.get(row,col));
 			}
 		}
 	}
@@ -148,6 +161,25 @@ public class Graph implements Comparable<Graph>, Serializable{
 	}
 	
 	/**
+	 * Returns number of connected neighbors
+	 * @param node id
+	 * @return number of neighbors
+	 */
+	public int countNeighbors(int node){
+		int neighbors = 0;
+		
+		for(int i=node+1; i<size; i++){
+			if( get(node,i) ) 
+				neighbors++;
+		}
+		for(int i=0; i< node; i++){
+			if( get(i,node) ) 
+				neighbors++;
+		}
+		return neighbors;
+	}
+	
+	/**
 	 * Extend the graph by adding a node (increasing the size by 1).
 	 * The new edges are zero filled.
 	 * @return extended graph
@@ -155,7 +187,7 @@ public class Graph implements Comparable<Graph>, Serializable{
 	public Graph extend(){
 		int newSize = size +1;
 		Graph graph = new Graph(newSize);
-		
+		graph.originId = this.id;
 		for(int row=0; row < size; row++) {
 			for(int col=0; col < size; col++) {
 				graph.set(row, col, get(row,col));
@@ -179,41 +211,9 @@ public class Graph implements Comparable<Graph>, Serializable{
 		}
 		return graph;
 	}
+
 	
-	/**
-	 * Mirror upper triangle to lower triangle
-	 * @return mirrored graph
-	 */
-	public Graph mirror(){
-		Graph graph = new Graph(size);
-		
-		for(int row=0; row < size; row++) {
-			for(int col=row+1; col < size; col++) {
-				if(this.get(row, col)) {
-					graph.set(row,col, true);
-					graph.set(col,row, true);
-				}
-			}
-		}
-		return graph;
-	}
-	
-	/**
-	 * Generate random graph as upper triangular matrix
-	 * @param size of graph to generate
-	 * @return generated graph
-	 */
-	public static Graph generateRandom(int size){
-		Graph g = new Graph(size);
-		
-		for(int row=0; row < size; row++) {
-			for(int col=row+1; col < size; col++) {
-				if(rnd.nextBoolean()) 
-					g.set(row,col, true);
-			}
-		}
-		return g;
-	}
+
 
 	/**
 	 * Checks to see if this graph is IsoMorph of another graph
@@ -222,27 +222,94 @@ public class Graph implements Comparable<Graph>, Serializable{
 	 */
 	public boolean isIsomorphOf(Graph o){
 		//METHOD STUB
+		
+		
+		/*
+		 
+		 */
 		return this.equals(o);
+	}
+		
+	/**
+	 * Invert all edges 1 <-> 0
+	 */
+	public void invert(){
+		matrix.flip(0, matrix.size());
+	}
+	
+	/**
+	 * Mirror matrix and set dominant value to zero
+	 * @return
+	 */
+	public Graph normalize(){
+		Graph graph = new Graph(this);
+		graph.mirror();
+		
+		//Dominant value 1 then invert
+		if( dominantValue())
+			invert();
+		
+		return graph;
 	}
 	
 	/**
 	 * Mirror upper triangular matrix, and encode it as a string
 	 * @return string
 	 */
-	public String encodeAsJsonValue(){
-		Graph graph = this.mirror();
-		
+	public String encodeAsJsonValue(){		
 		String out ="";
 		for(int i=0; i < size*size; i++) {
-			out+=  graph.matrix.get(i)?1:0 ;
+			out+=  matrix.get(i)?1:0 ;
 		}
 		return out;
+	}	
+	
+	
+	
+	public UUID getId()			{ return id;}
+	public UUID getOriginId()	{ return originId; }
+	public void assign()		{ assigned = true;}
+	public void unassigned()	{ assigned = false;}
+	public boolean isAssigned()	{ return assigned;}
+	public void setSolved(boolean isSolved) { this.solved = isSolved;}
+	public boolean isSolved()	{ return solved;}
+	
+	
+	//--------------------------------------------------------
+	//					Private Methods
+	//--------------------------------------------------------
+	
+	/**
+	 * Returns the most common edge type
+	 * @return	true if 1 is common edge
+	 * 			false if 0 is most common edge
+	 */
+	private boolean dominantValue(){
+		int numSet = matrix.cardinality();
+		int numUnset = matrix.size() - numSet;
+	
+		return numSet > numUnset;
 	}
 	
-	@Override
-	public String toString() {		
-		String out ="";
+	/**
+	 * Mirror upper triangle to lower triangle
+	 * @return mirrored graph
+	 */
+	private void mirror(){
 		for(int row=0; row < size; row++) {
+			for(int col=row+1; col < size; col++) {
+				if(get(row, col)) {
+					set(row,col, true);
+					set(col,row, true);
+				}
+			}
+		}
+	}
+	
+	public String asPrettyTable() {		
+		String out ="Graph ("+size+") "+matrix.cardinality()+"/"+matrix.size()+"\n";
+		for(int row=0; row < size; row++) {
+			out += " |";
 			for(int col=0; col < size; col++)
 			{
 				out+=  (get(row,col)?1:0) +" ";
@@ -250,6 +317,14 @@ public class Graph implements Comparable<Graph>, Serializable{
 			out += "\n";
 		}
 		return out;
+	}
+	
+	//--------------------------------------------------------
+	//				Overide Basic Methods
+	//--------------------------------------------------------
+	@Override
+	public String toString() {		
+		return "Graph ("+size+") "+id+" "+encodeAsJsonValue();
 	}
 	
 	@Override
@@ -287,4 +362,24 @@ public class Graph implements Comparable<Graph>, Serializable{
 		return new Graph(this);
 	}
 	
+	//--------------------------------------------------------
+	//					Static Methods
+	//--------------------------------------------------------
+	
+	/**
+	 * Generate random graph as upper triangular matrix
+	 * @param size of graph to generate
+	 * @return generated graph
+	 */
+	public static Graph generateRandom(int size){
+		Graph g = new Graph(size);
+		
+		for(int row=0; row < size; row++) {
+			for(int col=row+1; col < size; col++) {
+				if(rnd.nextBoolean()) 
+					g.set(row,col, true);
+			}
+		}
+		return g;
+	}
 }
