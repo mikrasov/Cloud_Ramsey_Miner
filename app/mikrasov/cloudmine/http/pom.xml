@@ -1,0 +1,71 @@
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+  xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+  <modelVersion>4.0.0</modelVersion>
+
+  <groupId>caveProgram.test.spring</groupId>
+  <artifactId>testProgram</artifactId>
+  <version>0.0.1-SNAPSHOT</version>
+  <packaging>jar</packaging>
+
+  <name>testProgram</name>
+  <url>http://maven.apache.org</url>
+
+  <properties>
+    <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
+  </properties>
+
+  <dependencies>
+    <dependency>
+      <groupId>junit</groupId>
+      <artifactId>junit</artifactId>
+      <version>3.8.1</version>
+      <scope>test</scope>
+    </dependency>
+    
+    <dependency>
+      <groupId>	org.apache.oltu.oauth2</groupId>
+      <artifactId>	org.apache.oltu.oauth2.jwt   </artifactId>
+      <version>1.0.0</version>
+    </dependency>
+
+
+
+    <dependency>
+    	<groupId>org.apache.oltu</groupId>
+    	<artifactId>org.apache.oltu.parent</artifactId>
+    	<version>2</version>
+    	<type>pom</type>
+    </dependency>
+    <dependency>
+    	<groupId>org.apache.oltu.commons</groupId>
+    	<artifactId>org.apache.oltu.commons.encodedtoken</artifactId>
+    	<version>1.0.0</version>
+    </dependency>
+    <dependency>
+    	<groupId>org.apache.oltu.commons</groupId>
+    	<artifactId>org.apache.oltu.commons.json</artifactId>
+    	<version>1.0.0</version>
+    </dependency>
+    <dependency>
+    	<groupId>org.apache.oltu.commons</groupId>
+    	<artifactId>org.apache.oltu.commons.parent</artifactId>
+    	<version>1</version>
+    	<type>pom</type>
+    </dependency>
+    <dependency>
+    	<groupId>org.apache.oltu.oauth2</groupId>
+    	<artifactId>org.apache.oltu.oauth2.client</artifactId>
+    	<version>1.0.0</version>
+    </dependency>
+    <dependency>
+    	<groupId>org.apache.httpcomponents</groupId>
+    	<artifactId>httpclient</artifactId>
+    	<version>4.3.3</version>
+    </dependency>
+    <dependency>
+    	<groupId>org.apache.felix</groupId>
+    	<artifactId>org.apache.felix.http.proxy</artifactId>
+    	<version>2.2.2</version>
+    </dependency>
+  </dependencies>
+</project>
