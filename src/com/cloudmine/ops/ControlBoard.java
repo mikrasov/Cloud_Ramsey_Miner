@@ -73,15 +73,18 @@ public class ControlBoard extends AppServer {
 		out += "<td><strong>Origin</strong></td>";
 		out += "<td><strong>Size</strong></td>";
 		out += "<td><strong>Assigned</strong></td>";
+		out += "<td><strong>Times Assigned</strong></td>";
 		out += "<td><strong>Solved</strong></td>";
 		out += "</tr>\n";
 		
 		for(Graph g: bank){
+			if(g.size() <40) continue;
 			out += "<tr>";
 			out += "<td>"+g.getId()+"</td>";
 			out += "<td>"+g.getOriginId()+"</td>";
 			out += "<td>"+g.size()+"</td>";
-			out += "<td>"+g.isAssigned()+"</td>";
+			out += "<td>"+(g.isAssigned()?"T":"F")+"</td>";
+			out += "<td>"+g.timesAssigned()+"</td>";
 			out += "<td>"+g.isSolved()+"</td>";
 			out += "</tr>\n";
 		}
@@ -99,9 +102,9 @@ public class ControlBoard extends AppServer {
 		out += "<td><strong>Additional</strong></td>";
 		out += "<td><strong>Version</strong></td>";
 		out += "</tr>";
-		for(UUID k: map.keySet()){
+		
+		for(Task t: map.values()){
 			out += "<tr>";
-			Task t = map.get(k);	
 			Configuration c = t.getTargetMine();
 			out += "<td>"+t.getTaskId()+":</td>";
 			out += "<td>"+ago(t.timeSinceLastSeen())+"</td>";
