@@ -64,8 +64,17 @@ public class Foreman extends AppServer {
 				//TODO: ADD API CALLL HERE
 			}
 			
+			graph.assign();
 			bank.put(graph);
 			System.out.println("\tAdding : "+graph.encodeAsJsonValue());
+			
+			//Un-assign origin
+			if(bank.contains(graph.getOriginId())){
+				Graph origin = bank.get(graph.getOriginId());
+				origin.unassign();
+			}
+			
+			
 		}
 	}
 	

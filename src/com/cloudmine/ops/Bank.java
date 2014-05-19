@@ -52,6 +52,11 @@ public class Bank implements Serializable, Iterable<Graph>{
 		return true;
 	}
 	
+	public synchronized Graph get(UUID graphID){
+		return map.get(graphID);
+	}
+	
+	
 	public synchronized List<Graph> getLevel(int level){
 		return hierarchy[level];
 	}
@@ -74,6 +79,11 @@ public class Bank implements Serializable, Iterable<Graph>{
 		put(g);
 		return g;
 	}
+	
+	public synchronized boolean contains(UUID graphId){
+		return map.containsKey(graphId);
+	}
+	
 
 	public int size(){
 		return map.size();
