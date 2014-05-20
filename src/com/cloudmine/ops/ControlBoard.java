@@ -1,6 +1,9 @@
 package com.cloudmine.ops;
 
 import java.io.IOException;
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.Comparator;
 import java.util.Map;
 import java.util.TreeMap;
 import java.util.UUID;
@@ -13,12 +16,12 @@ import com.cloudmine.http.AppServer;
 public class ControlBoard extends AppServer {
 
 	protected Bank bank = new Bank();
-	protected Map<UUID, Task> map = new TreeMap<>();
+	protected Map<UUID, Task> tasks = new TreeMap<>();
 	
 	public ControlBoard(Bank bank, Map<UUID, Task> map) {
 		super(Configuration.CONTROL_BOARD_PORT, AppServer.CONTENT_HTML);
 		this.bank = bank;
-		this.map = map;
+		this.tasks = map;
 	}
 
 	@Override
@@ -35,8 +38,9 @@ public class ControlBoard extends AppServer {
 
 	private String genStats(){
 		String out = "<h1>Stats :</h1>";
-		out += "<ul>Version: "+Configuration.VERSION+"</ul>";
-		out += "<ul>Bank Size: "+bank.size()+"</ul>";
+		out += "<ul><strong>Version:</strong> "+Configuration.VERSION+"</ul>";
+		out += "<ul><strong>Bank Size:</strong> "+bank.size()+"</ul>";
+		out += "<ul><strong>Tasks:</strong> "+tasks.size()+"</ul>";
 		return out;
 	}
 	
@@ -73,13 +77,12 @@ public class ControlBoard extends AppServer {
 		out += "<td><strong>Origin</strong></td>";
 		out += "<td><strong>Size</strong></td>";
 		out += "<td><strong>Assigned</strong></td>";
-		out += "<td><strong>Times Assigned</strong></td>";
-		out += "<td><strong>Times Failed</strong></td>";
+		out += "<td><strong># Assigned</strong></td>";
+		out += "<td><strong># Failed</strong></td>";
 		out += "<td><strong>Solved</strong></td>";
 		out += "</tr>\n";
 		
-		for(Graph g: bank){
-			if(g.size() <40) continue;
+		for(Graph g: bank.getGraphsGreaterThan(40)){
 			out += "<tr>";
 			out += "<td>"+g.getId()+"</td>";
 			out += "<td>"+g.getOriginId()+"</td>";
@@ -99,22 +102,31 @@ public class ControlBoard extends AppServer {
 		out += "<table width='100%'>\n";
 		out += "<tr>";
 		out += "<td><strong>Task ID</strong></td>";
-		out += "<td><strong>LastSeen</strong></td>";
+		out += "<td><strong>Last Progress</strong></td>";
+		out += "<td><strong>Failed</strong></td>";
 		out += "<td><strong>Type</strong></td>";
 		out += "<td><strong>Additional</strong></td>";
 		out += "<td><strong>Version</strong></td>";
-		out += "<td><strong>Failed</strong></td>";
+		out += "<td><strong>Last Seen</strong></td>";
 		out += "</tr>";
 		
-		for(Task t: map.values()){
+		ArrayList<Task> sortedTasks = new ArrayList<Task>(tasks.values());
+		Collections.sort(sortedTasks, new Comparator<Task>() {
+			@Override
+			public int compare(Task t1, Task t2) {
+				return (int)( t1.timeSinceLastSeen() - t2.timeSinceLastSeen());
+			}
+		});
+		for(Task t: sortedTasks){
 			out += "<tr>";
 			Configuration c = t.getTargetMine();
 			out += "<td>"+t.getTaskId()+":</td>";
-			out += "<td>"+ago(t.timeSinceLastSeen())+"</td>";
+			out += "<td>"+ago(t.timeSinceLastProgress())+"</td>";
+			out += "<td>"+t.hasFailed()+"</td>";
 			out += "<td>"+c.getType()+"</td>";
 			out += "<td>"+c.getAdditionalInfo()+"</td>";
 			out += "<td>"+c.getVersion()+"</td>";
-			out += "<td>"+t.hasFailed()+"</td>";
+			out += "<td>"+ago(t.timeSinceLastSeen())+"</td>";
 			out += "</tr>\n";
 		}
 		out += "</table>\n";
@@ -128,7 +140,7 @@ public class ControlBoard extends AppServer {
 		long days = timeDiff / (24 * 60 * 60 * 1000);
 
 		if(days > 16000 )
-			return "never";
+			return "Never";
 		else if(days > 0)
 			return days + " days ago";
 		else if(hours > 0)

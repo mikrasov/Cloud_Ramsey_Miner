@@ -58,6 +58,11 @@ public class Foreman extends AppServer {
 			Solution solution = gson.fromJson(s, Solution.class);
 			Graph graph = solution.getGraph();
 			
+			if(activeTasks.containsKey(solution.getTaskId())){
+				Task task = activeTasks.get(solution.getTaskId());
+				task.justSawProgress();
+			}
+			
 			//Send this  to api
 			if(graph.size() > 102){
 				String jsonSolution = graph.encodeAsJsonValue();
@@ -100,7 +105,7 @@ public class Foreman extends AppServer {
 				
 				Graph bestAvailable  = bank.getBest(mine.isLongTerm()?Configuration.SLOW_CUTOFF:Configuration.FAST_CUTOFF);
 				Task task = assign(mine,miner.getId(), bestAvailable);
-				
+				task.justSeen();
 				taskList.add(task); //To sent to server
 				
 				System.out.println("\t ^ ASSIGNING: "+ task);

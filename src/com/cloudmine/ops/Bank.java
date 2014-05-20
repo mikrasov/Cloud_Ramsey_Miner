@@ -61,6 +61,14 @@ public class Bank implements Serializable, Iterable<Graph>{
 		return hierarchy[level];
 	}
 	
+	public synchronized List<Graph> getGraphsGreaterThan(int level){
+		LinkedList<Graph> list = new LinkedList<>();
+		for(int i = hierarchy.length-1; i > level ; i--){
+			list.addAll(hierarchy[i]);
+		}
+		return list;
+	}
+	
 	public synchronized Graph getBest(int startingAt){
 		if(startingAt > hierarchy.length-1) 
 			startingAt = hierarchy.length-1;

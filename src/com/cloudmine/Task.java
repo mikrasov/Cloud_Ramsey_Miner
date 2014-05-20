@@ -13,6 +13,7 @@ public class Task {
 	
 	private transient boolean failed = false;
 	private transient long lastSeen=0;
+	private transient long lastProgress=0;
 	private transient Configuration targetMine;
 	
 	public Task(Configuration targetMine, UUID targetMiner, Graph seed) {
@@ -46,6 +47,10 @@ public class Task {
 		lastSeen = System.currentTimeMillis();
 	}
 	
+	public void justSawProgress(){
+		lastProgress = System.currentTimeMillis();
+	}
+	
 	public long lastSeen(){
 		return lastSeen;
 	}
@@ -54,6 +59,10 @@ public class Task {
 		return System.currentTimeMillis() - lastSeen;
 	}
 	
+	
+	public long timeSinceLastProgress(){
+		return System.currentTimeMillis() - lastProgress;
+	}
 	public void markFailed(){
 		failed = true;
 	}
