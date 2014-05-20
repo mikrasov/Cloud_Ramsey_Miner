@@ -74,6 +74,7 @@ public class ControlBoard extends AppServer {
 		out += "<td><strong>Size</strong></td>";
 		out += "<td><strong>Assigned</strong></td>";
 		out += "<td><strong>Times Assigned</strong></td>";
+		out += "<td><strong>Times Failed</strong></td>";
 		out += "<td><strong>Solved</strong></td>";
 		out += "</tr>\n";
 		
@@ -85,6 +86,7 @@ public class ControlBoard extends AppServer {
 			out += "<td>"+g.size()+"</td>";
 			out += "<td>"+(g.isAssigned()?"T":"F")+"</td>";
 			out += "<td>"+g.timesAssigned()+"</td>";
+			out += "<td>"+g.timesFailedToFindSolution()+"</td>";
 			out += "<td>"+g.isSolved()+"</td>";
 			out += "</tr>\n";
 		}
@@ -101,6 +103,7 @@ public class ControlBoard extends AppServer {
 		out += "<td><strong>Type</strong></td>";
 		out += "<td><strong>Additional</strong></td>";
 		out += "<td><strong>Version</strong></td>";
+		out += "<td><strong>Failed</strong></td>";
 		out += "</tr>";
 		
 		for(Task t: map.values()){
@@ -111,6 +114,7 @@ public class ControlBoard extends AppServer {
 			out += "<td>"+c.getType()+"</td>";
 			out += "<td>"+c.getAdditionalInfo()+"</td>";
 			out += "<td>"+c.getVersion()+"</td>";
+			out += "<td>"+t.hasFailed()+"</td>";
 			out += "</tr>\n";
 		}
 		out += "</table>\n";

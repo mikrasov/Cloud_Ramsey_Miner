@@ -87,13 +87,17 @@ public class Foreman extends AppServer {
 			System.out.println("\t"+m);
 			
 			if(miner.hasTask() && activeTasks.containsKey(miner.getTask())){
-				activeTasks.get(miner.getTask()).justSeen();
+				Task task = activeTasks.get(miner.getTask());
+				task.justSeen();
+				if(miner.failedToFindSolution())
+					task.markFailed();
 			}
 			else{
 				//TODO: Logic for what happens when a miner is working on a task the server knows nothing about
 			}
 				
 			if(!miner.isRunning()){
+				
 				Graph bestAvailable  = bank.getBest(mine.isLongTerm()?Configuration.SLOW_CUTOFF:Configuration.FAST_CUTOFF);
 				Task task = assign(mine,miner.getId(), bestAvailable);
 				

@@ -101,9 +101,10 @@ public class ForwardMiner extends Miner{
 			size = current.size();
 			isSolved = findCounterExample(current);
 			
-			if(!isSolved) 
+			if(!isSolved){ 
+				failedToFindSolution = true;
 				throw new Exception("No solution found");
-			//System.out.println(">>Counter-example found on "+current.size()+"!\n"+current);
+			}
 			
 			if(size> minUseful){
 				sendSolution(isSolved);

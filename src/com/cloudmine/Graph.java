@@ -16,6 +16,7 @@ public class Graph implements Comparable<Graph>, Serializable{
 	private UUID id;
 	private UUID originId;
 	private int numTimesAssigned = 0;
+	private int numFailedToFindSolution = 0;
 	private transient boolean assigned = false;
 
 	private final BitSet matrix;
@@ -270,6 +271,7 @@ public class Graph implements Comparable<Graph>, Serializable{
 		numTimesAssigned++;
 	}
 	
+	public void failedToFindSolution(){ numFailedToFindSolution++; }
 	public void unassign()		{ assigned = false;}
 	public void setSolved(boolean isSolved) { this.solved = isSolved;}
 	
@@ -277,6 +279,7 @@ public class Graph implements Comparable<Graph>, Serializable{
 	public UUID getOriginId()	{ return originId; }
 	public boolean isSolved()	{ return solved;}
 	public int timesAssigned()	{ return numTimesAssigned;}
+	public int timesFailedToFindSolution(){ return numFailedToFindSolution; }
 	public boolean isAssigned()	{ return assigned;}
 	
 	//--------------------------------------------------------

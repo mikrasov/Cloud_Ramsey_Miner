@@ -17,16 +17,17 @@ public class Miner implements Runnable{
 	
 	protected String error;
 	protected boolean running = false;
+	protected boolean failedToFindSolution = false;
 	protected int size = -1;
 	protected UUID task;
 	
 	public void mine(Graph graph){
-		
 		this.current = graph;
 		thread.start();
 	}
 	
 	public void reset(){
+		failedToFindSolution = false;
 		running = false;
 		current = null;
 		size = -1;
@@ -78,6 +79,7 @@ public class Miner implements Runnable{
 	public int getTaskSize() 	{ return size; }
 	public UUID getTask() 		{ return task; }
 	public boolean hasTask() 	{ return task != null; }
+	public boolean failedToFindSolution(){ return failedToFindSolution; }
 
 	public void process() throws Exception{
 		

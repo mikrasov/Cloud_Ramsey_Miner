@@ -11,6 +11,7 @@ public class Task {
 	private final UUID targetMinerId;
 	private final Graph seed;
 	
+	private transient boolean failed = false;
 	private transient long lastSeen=0;
 	private transient Configuration targetMine;
 	
@@ -53,6 +54,13 @@ public class Task {
 		return System.currentTimeMillis() - lastSeen;
 	}
 	
+	public void markFailed(){
+		failed = true;
+	}
+	
+	public boolean hasFailed(){
+		return failed;
+	}
 
 	@Override
 	public String toString() {

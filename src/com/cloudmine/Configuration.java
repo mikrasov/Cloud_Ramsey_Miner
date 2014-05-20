@@ -11,7 +11,7 @@ public class Configuration {
 	public static final int 	SLOW_CUTOFF = 101;
 	
 	
-	public static final String	VERSION = "0.05";
+	public static final String	VERSION = "0.06";
 	
 	public static final int 	LONG_REMORTING_INTERVAL = 10*60*1000;
 	public static final int 	SHORT_REMORTING_INTERVAL = 1*60*1000;
@@ -25,7 +25,7 @@ public class Configuration {
 		new Configuration("LOCAL_PC",	true,	2,		5*1000,						"http://localhost",		40,						99);
         new Configuration("LOCAL_MAC",	true,	2,		5*1000,						"http://localhost", 	40,						99);
         new Configuration("AWS",		true,	1,		LONG_REMORTING_INTERVAL,	FOREMAN_ADDRESS,		MIN_USEFULL_SOLUTION,	MAX_USEFULL_SOLUTION);
-        new Configuration("AWS-BIG",	true,	2,		LONG_REMORTING_INTERVAL,	FOREMAN_ADDRESS,		MIN_USEFULL_SOLUTION,	MAX_USEFULL_SOLUTION);
+        new Configuration("AWS-LARGE",	true,	2,		LONG_REMORTING_INTERVAL,	FOREMAN_ADDRESS,		MIN_USEFULL_SOLUTION,	MAX_USEFULL_SOLUTION);
         new Configuration("EUCALYPTUS",	true,	1,		LONG_REMORTING_INTERVAL,	FOREMAN_ADDRESS,		MIN_USEFULL_SOLUTION,	MAX_USEFULL_SOLUTION);
         new Configuration("CONDOR",		false,	1,		SHORT_REMORTING_INTERVAL,	FOREMAN_ADDRESS,		MIN_USEFULL_SOLUTION,	MAX_USEFULL_SOLUTION);
 	}
