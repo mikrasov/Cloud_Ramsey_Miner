@@ -78,8 +78,6 @@ public class Foreman extends AppServer {
 				Graph origin = bank.get(graph.getOriginId());
 				origin.unassign();
 			}
-			
-			
 		}
 	}
 	
@@ -94,15 +92,15 @@ public class Foreman extends AppServer {
 			if(miner.hasTask() && activeTasks.containsKey(miner.getTask())){
 				Task task = activeTasks.get(miner.getTask());
 				task.justSeen();
-				if(miner.failedToFindSolution())
-					task.markFailed();
+				if(miner.failedToFindSolution()){
+					task.markFailed();		
+				}
 			}
 			else{
 				//TODO: Logic for what happens when a miner is working on a task the server knows nothing about
 			}
 				
 			if(!miner.isRunning()){
-				
 				Graph bestAvailable  = bank.getBest(mine.isLongTerm()?Configuration.SLOW_CUTOFF:Configuration.FAST_CUTOFF);
 				Task task = assign(mine,miner.getId(), bestAvailable);
 				task.justSeen();
@@ -110,9 +108,6 @@ public class Foreman extends AppServer {
 				
 				System.out.println("\t ^ ASSIGNING: "+ task);
 			}
-			
-			
-			
 			
 		}
 		return taskList;
@@ -126,6 +121,5 @@ public class Foreman extends AppServer {
 		task.getSeed().assign();
 		return task;
 	}
-	
 	
 }

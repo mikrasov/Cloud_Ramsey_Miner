@@ -44,7 +44,6 @@ public class ControlBoard extends AppServer {
 		return out;
 	}
 	
-	
 	private String genBank(){
 		String out = "<h1>Bank:</h1>";
 		out += "<table width='100%'>\n";
@@ -56,8 +55,9 @@ public class ControlBoard extends AppServer {
 			out += "<td align='right'><strong>"+i+":</strong></td>";
 			
 			int sz = bank.getLevel(i).size();
-			out += "<td align='right'>"+(sz>0?sz:"-")+"</td>";
+			out += "<td align='right'>"+(sz>0?sz:"-")+"</td>";		
 			
+			//columns
 			n++;
 			if(n > 10){
 				n = 0;
@@ -102,6 +102,7 @@ public class ControlBoard extends AppServer {
 		out += "<table width='100%'>\n";
 		out += "<tr>";
 		out += "<td><strong>Task ID</strong></td>";
+		out += "<td><strong>On Size</strong></td>";
 		out += "<td><strong>Last Progress</strong></td>";
 		out += "<td><strong>Failed</strong></td>";
 		out += "<td><strong>Type</strong></td>";
@@ -121,6 +122,7 @@ public class ControlBoard extends AppServer {
 			out += "<tr>";
 			Configuration c = t.getTargetMine();
 			out += "<td>"+t.getTaskId()+":</td>";
+			out += "<td>"+t.currentSize()+"</td>";
 			out += "<td>"+ago(t.timeSinceLastProgress())+"</td>";
 			out += "<td>"+t.hasFailed()+"</td>";
 			out += "<td>"+c.getType()+"</td>";

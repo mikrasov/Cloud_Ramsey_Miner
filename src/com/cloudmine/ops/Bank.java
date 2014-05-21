@@ -8,7 +8,6 @@ import java.io.IOException;
 import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
 import java.io.Serializable;
-import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.LinkedList;
@@ -26,6 +25,7 @@ public class Bank implements Serializable, Iterable<Graph>{
 	public static final int GRAPH_AT_LEAST = 8;
 	public static final String BANK_FILENAME = "bank.save";
 	public static final String BANK_TEMP_FILENAME = "bank.tmp";
+	public static final int IGNORE_FAILED_MORE_THAN = 2;
 
 	private File bankFile = new File(BANK_FILENAME);
 	private File bankTempFile = new File(BANK_TEMP_FILENAME);
@@ -56,7 +56,6 @@ public class Bank implements Serializable, Iterable<Graph>{
 		return map.get(graphID);
 	}
 	
-	
 	public synchronized List<Graph> getLevel(int level){
 		return hierarchy[level];
 	}
@@ -76,10 +75,9 @@ public class Bank implements Serializable, Iterable<Graph>{
 		//Search for best starting point
 		for(int size=startingAt; size>=GRAPH_AT_LEAST; size--){
 			for(Graph g: hierarchy[size]){
-				if(!g.isAssigned())
+				if(!g.isAssigned() && g.timesFailedToFindSolution() < IGNORE_FAILED_MORE_THAN)
 					return g;
 			}
-			
 		}
 		//could not find one, so make one
 		Graph g = Graph.generateRandom(GRAPH_AT_LEAST);

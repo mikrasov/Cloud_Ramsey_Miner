@@ -14,12 +14,14 @@ public class Task {
 	private transient boolean failed = false;
 	private transient long lastSeen=0;
 	private transient long lastProgress=0;
+	private transient int size;
 	private transient Configuration targetMine;
 	
 	public Task(Configuration targetMine, UUID targetMiner, Graph seed) {
 		this.targetMine = targetMine;
 		this.targetMinerId = targetMiner;
 		this.seed = seed;
+		this.size = seed.size();
 	}
 	
 	public UUID getTaskId(){
@@ -49,6 +51,7 @@ public class Task {
 	
 	public void justSawProgress(){
 		lastProgress = System.currentTimeMillis();
+		size++;
 	}
 	
 	public long lastSeen(){
@@ -65,6 +68,9 @@ public class Task {
 	}
 	public void markFailed(){
 		failed = true;
+	}
+	public int currentSize(){
+		return size;
 	}
 	
 	public boolean hasFailed(){
