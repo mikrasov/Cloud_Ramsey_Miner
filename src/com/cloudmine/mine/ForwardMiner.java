@@ -101,9 +101,8 @@ public class ForwardMiner extends Miner{
 				throw new Exception("No solution found");
 			}
 			
-
-			
 			current = current.extendRandom();
+			sendSolution(isSolved);
 		}
 		while(current.size() <= maxUseful);
 	}

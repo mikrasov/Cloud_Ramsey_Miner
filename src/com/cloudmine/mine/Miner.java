@@ -63,7 +63,7 @@ public class Miner implements Runnable{
 		Graph normalized = current.normalize();
 		normalized.setSolved(isSolved);
 		
-		if(current.size()> minUseful)
+		if(normalized.size()> minUseful)
 			solutionQueue.add(new Solution(taskId,normalized));
 	}
 	

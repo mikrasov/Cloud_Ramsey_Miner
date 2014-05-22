@@ -97,7 +97,6 @@ public class Foreman extends AppServer {
 					if(miner.failedToFindSolution()){
 						task.markFailed();		
 					}
-					System.out.println("\t ^ "+task);
 				}
 				else{
 					//Unknown task added
