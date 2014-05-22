@@ -9,7 +9,6 @@ import com.cloudmine.Task;
 
 public class Miner implements Runnable{
 
-	protected transient Thread thread = new Thread(this);
 	protected transient Graph current;
 	protected transient Queue<Solution> solutionQueue = new ConcurrentLinkedQueue<>();
 	protected transient final int minUseful, maxUseful;
@@ -27,8 +26,14 @@ public class Miner implements Runnable{
 	}
 	
 	public void mine(Graph graph){
+		reset();
+		
+		//Wait until stopped
+		while(running) try {Thread.sleep(10);} catch (InterruptedException e) {}
+		
 		this.current = graph;
-		thread.start();
+		
+		(new Thread(this) ).start();
 	}
 	
 	public void reset(){
@@ -40,9 +45,9 @@ public class Miner implements Runnable{
 	}
 	
 	public void assign(Task task){
-		if(!this.id.equals(task.getTargetMiner())) return;
+		if(task != null && !this.id.equals(task.getTargetMiner())) return;
 		
-		if(task.getSeed() == null){
+		if(task == null || task.getSeed() == null){
 			reset();
 			return;
 		}
@@ -85,7 +90,6 @@ public class Miner implements Runnable{
 	public boolean hasTask() 	{ return taskId != null; }
 	public boolean failedToFindSolution(){ return failedToFindSolution; }
 
-	public void process() throws Exception{
-		
-	}
+	public void process() throws Exception{}
+
 }

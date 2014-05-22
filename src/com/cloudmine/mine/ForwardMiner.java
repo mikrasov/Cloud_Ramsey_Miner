@@ -9,7 +9,7 @@ public class ForwardMiner extends Miner{
 		super(minUseful, maxUseful);
 	}
 
-	public boolean findCounterExample(Graph g){
+	public boolean findCounterExample(Graph g)  throws Exception{
 		TabooList taboo = new TabooList();
 		
 		while(true){
@@ -62,7 +62,7 @@ public class ForwardMiner extends Miner{
 				}
 			}
 	
-			if( best_count == Integer.MAX_VALUE) {
+			if( true || best_count == Integer.MAX_VALUE) {
 				System.out.println("no best edge found");
 				return false;
 			}
