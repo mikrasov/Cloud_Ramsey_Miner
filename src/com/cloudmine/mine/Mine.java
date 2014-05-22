@@ -73,6 +73,7 @@ public class Mine implements Runnable{
 				contactServer();
 			} catch (Exception e) {
 				System.err.println("EXCEPTION: "+e.getMessage());
+				e.printStackTrace();
 			}
 			
 			try {
@@ -111,4 +112,5 @@ public class Mine implements Runnable{
 		
 		System.out.println("---------------------------------\n");
 	}
+	
 }

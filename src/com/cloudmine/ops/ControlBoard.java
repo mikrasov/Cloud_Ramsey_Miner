@@ -118,18 +118,22 @@ public class ControlBoard extends AppServer {
 				return (int)( t1.timeSinceLastSeen() - t2.timeSinceLastSeen());
 			}
 		});
+		
+		int n = 0;
 		for(Task t: sortedTasks){
 			out += "<tr>";
 			Configuration c = t.getTargetMine();
 			out += "<td>"+t.getTaskId()+":</td>";
 			out += "<td>"+t.currentSize()+"</td>";
 			out += "<td>"+ago(t.timeSinceLastProgress())+"</td>";
-			out += "<td>"+t.hasFailed()+"</td>";
+			out += "<td>"+(t.hasFailed()?"X":"")+"</td>";
 			out += "<td>"+c.getType()+"</td>";
 			out += "<td>"+c.getAdditionalInfo()+"</td>";
 			out += "<td>"+c.getVersion()+"</td>";
 			out += "<td>"+ago(t.timeSinceLastSeen())+"</td>";
 			out += "</tr>\n";
+			n++;
+			if(n>100) break;
 		}
 		out += "</table>\n";
 		return out;

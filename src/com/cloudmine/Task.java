@@ -2,26 +2,30 @@ package com.cloudmine;
 
 import java.util.UUID;
 
-import com.cloudmine.mine.Mine;
-import com.cloudmine.mine.Miner;
-
 public class Task {
 
-	private final UUID taskId = UUID.randomUUID();
+	private final UUID taskId;
 	private final UUID targetMinerId;
-	private final Graph seed;
+	
+	private Graph seed;
 	
 	private transient boolean failed = false;
 	private transient long lastSeen=0;
 	private transient long lastProgress=0;
-	private transient int size;
 	private transient Configuration targetMine;
 	
 	public Task(Configuration targetMine, UUID targetMiner, Graph seed) {
+		this.taskId = UUID.randomUUID();
 		this.targetMine = targetMine;
 		this.targetMinerId = targetMiner;
 		this.seed = seed;
-		this.size = seed.size();
+	}
+	
+	public Task(UUID taskId, Configuration targetMine, UUID targetMiner) {
+		this.taskId = taskId;
+		this.targetMine = targetMine;
+		this.targetMinerId = targetMiner;
+		this.seed = null;
 	}
 	
 	public UUID getTaskId(){
@@ -49,9 +53,9 @@ public class Task {
 		lastSeen = System.currentTimeMillis();
 	}
 	
-	public void justSawProgress(){
+	public void generatedGraph(Graph derivatice){
 		lastProgress = System.currentTimeMillis();
-		size++;
+		this.seed = derivatice;
 	}
 	
 	public long lastSeen(){
@@ -62,15 +66,20 @@ public class Task {
 		return System.currentTimeMillis() - lastSeen;
 	}
 	
-	
 	public long timeSinceLastProgress(){
 		return System.currentTimeMillis() - lastProgress;
 	}
+	
 	public void markFailed(){
 		failed = true;
+		seed.failedToFindSolution();
 	}
+	
 	public int currentSize(){
-		return size;
+		if(seed == null)
+			return -1;
+		else
+			return seed.size();
 	}
 	
 	public boolean hasFailed(){
@@ -79,6 +88,6 @@ public class Task {
 
 	@Override
 	public String toString() {
-		return taskId.toString()+" ("+seed.size()+") - ID:"+seed.getId()+" Origin:"+seed.getOriginId();
+		return taskId +": "+ (seed==null?"":(taskId.toString()+" ("+seed.size()+") - ID:"+seed.getId()+" Origin:"+seed.getOriginId()));
 	}
 }

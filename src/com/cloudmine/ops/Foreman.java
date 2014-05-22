@@ -60,13 +60,13 @@ public class Foreman extends AppServer {
 			
 			if(activeTasks.containsKey(solution.getTaskId())){
 				Task task = activeTasks.get(solution.getTaskId());
-				task.justSawProgress();
+				task.generatedGraph(graph);
 			}
 			
 			//Send this  to api
 			if(graph.size() > 102){
-				String jsonSolution = graph.encodeAsJsonValue();
 				//TODO: ADD API CALLL HERE
+				//To send solution call graph.encodeAsJsonValue()
 			}
 			
 			graph.assign();
@@ -74,52 +74,53 @@ public class Foreman extends AppServer {
 			System.out.println("\tAdding : "+graph.encodeAsJsonValue());
 			
 			//Un-assign origin
-			if(bank.contains(graph.getOriginId())){
+			if(graph.getOriginId() != null && bank.contains(graph.getOriginId())){
 				Graph origin = bank.get(graph.getOriginId());
 				origin.unassign();
 			}
 		}
 	}
 	
-	private List<Task> processMiners(Configuration mine, JsonArray jMiners){
-		List<Task> taskList = new LinkedList<>();
+	private List<Task> processMiners(Configuration mineConfig, JsonArray jMiners){
+		List<Task> tasksToSend = new LinkedList<>();
 		System.out.println("> Miners:");
 		for(JsonElement m: jMiners){
 			Miner miner = gson.fromJson(m, Miner.class);
 			
 			System.out.println("\t"+m);
 			
-			if(miner.hasTask() && activeTasks.containsKey(miner.getTask())){
-				Task task = activeTasks.get(miner.getTask());
-				task.justSeen();
-				if(miner.failedToFindSolution()){
-					task.markFailed();		
+			if(miner.hasTask()){
+				if(activeTasks.containsKey(miner.getTask())){
+					//Tracked task just seen
+					Task task = activeTasks.get(miner.getTask());
+					task.justSeen();
+					if(miner.failedToFindSolution()){
+						task.markFailed();		
+					}
+					System.out.println("\t ^ "+task);
 				}
-			}
-			else{
-				//TODO: Logic for what happens when a miner is working on a task the server knows nothing about
-			}
-				
+				else{
+					//Unknown task added
+					Task task = new Task(miner.getTask(), mineConfig, miner.getId());
+					task.justSeen();
+					activeTasks.put(task.getTaskId(), task);
+				}
+			}	
+			
+			//Miner is stopped
 			if(!miner.isRunning()){
-				Graph bestAvailable  = bank.getBest(mine.isLongTerm()?Configuration.SLOW_CUTOFF:Configuration.FAST_CUTOFF);
-				Task task = assign(mine,miner.getId(), bestAvailable);
+				Graph bestAvailable  = bank.getBest(mineConfig.isLongTerm()?Configuration.SLOW_CUTOFF:Configuration.FAST_CUTOFF);				
+				Task task = new Task(mineConfig, miner.getId(), bestAvailable);
+				task.getSeed().assign();
 				task.justSeen();
-				taskList.add(task); //To sent to server
+				activeTasks.put(task.getTaskId(), task);
 				
+				tasksToSend.add(task); //To sent to server
 				System.out.println("\t ^ ASSIGNING: "+ task);
 			}
 			
 		}
-		return taskList;
-	}
-	
-	private Task assign(Configuration mine, UUID targetMiner, Graph seed){
-		Task task = new Task(mine, targetMiner, seed);
-		
-		activeTasks.put(task.getTaskId(), task);
-		
-		task.getSeed().assign();
-		return task;
+		return tasksToSend;
 	}
 	
 }

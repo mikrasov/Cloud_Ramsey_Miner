@@ -4,14 +4,11 @@ import com.cloudmine.Graph;
 import com.cloudmine.TabooList;
 
 public class ForwardMiner extends Miner{
-
-	private final int minUseful, maxUseful;
 	
-	public ForwardMiner(int minUseful, int maxUseful){
-		this.maxUseful = maxUseful;
-		this.minUseful = minUseful;
+	public ForwardMiner(int minUseful, int maxUseful) {
+		super(minUseful, maxUseful);
 	}
-	
+
 	public boolean findCounterExample(Graph g){
 		TabooList taboo = new TabooList();
 		
@@ -62,11 +59,10 @@ public class ForwardMiner extends Miner{
 	
 					//flip it back
 					g.flip(i,j);
-					
 				}
 			}
 	
-			if(best_count == Integer.MAX_VALUE) {
+			if( best_count == Integer.MAX_VALUE) {
 				System.out.println("no best edge found");
 				return false;
 			}
@@ -87,7 +83,7 @@ public class ForwardMiner extends Miner{
 					+ "best edge: ("+best_i+","+best_j+")\t"
 					+ "color: "+ (g.get(best_i, best_j)?1:0)
 					);
-		*/
+			*/
 			// rinse and repeat
 		}
 		
@@ -98,7 +94,6 @@ public class ForwardMiner extends Miner{
 		boolean isSolved = false;
 		do{
 			
-			size = current.size();
 			isSolved = findCounterExample(current);
 			
 			if(!isSolved){ 
@@ -106,9 +101,7 @@ public class ForwardMiner extends Miner{
 				throw new Exception("No solution found");
 			}
 			
-			if(size> minUseful){
-				sendSolution(isSolved);
-			}
+
 			
 			current = current.extendRandom();
 		}

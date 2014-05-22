@@ -12,14 +12,19 @@ public class Miner implements Runnable{
 	protected transient Thread thread = new Thread(this);
 	protected transient Graph current;
 	protected transient Queue<Solution> solutionQueue = new ConcurrentLinkedQueue<>();
+	protected transient final int minUseful, maxUseful;
 	
 	private final UUID id = UUID.randomUUID();
 	
+	protected UUID taskId;
 	protected String error;
 	protected boolean running = false;
 	protected boolean failedToFindSolution = false;
-	protected int size = -1;
-	protected UUID task;
+	
+	public Miner(int minUseful, int maxUseful){
+		this.maxUseful = maxUseful;
+		this.minUseful = minUseful;
+	}
 	
 	public void mine(Graph graph){
 		this.current = graph;
@@ -30,8 +35,7 @@ public class Miner implements Runnable{
 		failedToFindSolution = false;
 		running = false;
 		current = null;
-		size = -1;
-		task = null;
+		taskId = null;
 		error = null;
 	}
 	
@@ -42,7 +46,7 @@ public class Miner implements Runnable{
 			reset();
 			return;
 		}
-		this.task = task.getTaskId();
+		this.taskId = task.getTaskId();
 		
 		mine(task.getSeed());
 	}
@@ -58,8 +62,9 @@ public class Miner implements Runnable{
 	protected void sendSolution(boolean isSolved){
 		Graph normalized = current.normalize();
 		normalized.setSolved(isSolved);
-		solutionQueue.add(new Solution(task,normalized));
-		//System.out.println(" # SOLUTION FOUND " + normalized);
+		
+		if(current.size()> minUseful)
+			solutionQueue.add(new Solution(taskId,normalized));
 	}
 	
 	@Override
@@ -76,9 +81,8 @@ public class Miner implements Runnable{
 		
 	public String getError() 	{ return error; }
 	public boolean isRunning()	{ return running; }
-	public int getTaskSize() 	{ return size; }
-	public UUID getTask() 		{ return task; }
-	public boolean hasTask() 	{ return task != null; }
+	public UUID getTask() 		{ return taskId; }
+	public boolean hasTask() 	{ return taskId != null; }
 	public boolean failedToFindSolution(){ return failedToFindSolution; }
 
 	public void process() throws Exception{
