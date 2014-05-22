@@ -79,7 +79,7 @@ public class ControlBoard extends AppServer {
 		out += "<td><strong>Assigned</strong></td>";
 		out += "<td><strong># Assigned</strong></td>";
 		out += "<td><strong># Failed</strong></td>";
-		out += "<td><strong>Solved</strong></td>";
+		out += "<td><strong>Not Solved</strong></td>";
 		out += "</tr>\n";
 		
 		for(Graph g: bank.getGraphsGreaterThan(40)){
@@ -87,10 +87,10 @@ public class ControlBoard extends AppServer {
 			out += "<td>"+g.getId()+"</td>";
 			out += "<td>"+g.getOriginId()+"</td>";
 			out += "<td>"+g.size()+"</td>";
-			out += "<td>"+(g.isAssigned()?"T":"F")+"</td>";
+			out += "<td>"+(g.isAssigned()?"X":"")+"</td>";
 			out += "<td>"+g.timesAssigned()+"</td>";
-			out += "<td>"+g.timesFailedToFindSolution()+"</td>";
-			out += "<td>"+g.isSolved()+"</td>";
+			out += "<td>"+(g.timesFailedToFindSolution()>0?g.timesFailedToFindSolution():"")+"</td>";
+			out += "<td>"+(g.isSolved()?"":"X")+"</td>";
 			out += "</tr>\n";
 		}
 		out += "</table>\n";
