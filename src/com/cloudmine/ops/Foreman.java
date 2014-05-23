@@ -91,11 +91,13 @@ public class Foreman extends AppServer {
 			
 			System.out.println("\tTask ID "+miner.getTask()+" "+miner.hasTask());
 			
-			if(miner.hasTask()){	
+			if(miner.hasTask()){
+				Task task;
 				if(activeTasks.containsKey(miner.getTask())){
 					//Tracked task just seen
-					Task task = activeTasks.get(miner.getTask());
-					task.justSeen();
+					task = activeTasks.get(miner.getTask());
+					
+					//Miner has failed
 					if(miner.failedToFindSolution()){
 						task.markFailed();		
 						
@@ -106,11 +108,14 @@ public class Foreman extends AppServer {
 				}
 				else{
 					//Unknown task added
-					Task task = new Task(miner.getTask(), mineConfig, miner.getId());
-					task.justSeen();
+					task = new Task(miner.getTask(), mineConfig, miner.getId());
+					
 					activeTasks.put(task.getTaskId(), task);
 					System.out.println("Unkown task added");
 				}
+				
+				task.justSeen();
+				task.setError(miner.getError());
 			}	
 			
 			//Miner is stopped

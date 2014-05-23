@@ -10,6 +10,7 @@ public class Task {
 	private Graph seed;
 	
 	private transient boolean failed = false;
+	private transient String error = "";
 	private transient long lastSeen=0;
 	private transient long lastProgress=0;
 	private transient long startedOn = System.currentTimeMillis();
@@ -67,6 +68,16 @@ public class Task {
 		return startedOn;
 	}
 	
+	public String getError(){
+		return error;
+	}
+	
+	public void setError(String error){
+		if(error == null)
+			this.error = "";
+		else
+			this.error = error;
+	}
 	
 	public long timeSinceLastSeen(){
 		return System.currentTimeMillis() - lastSeen;
