@@ -11,7 +11,7 @@ public class Configuration {
 	public static final int 	SLOW_CUTOFF = 101;
 	
 	
-	public static final String	VERSION = "0.07";
+	public static final String	VERSION = "0.09";
 	
 	public static final int 	LONG_REMORTING_INTERVAL = 10*60*1000;
 	public static final int 	SHORT_REMORTING_INTERVAL = 1*60*1000;

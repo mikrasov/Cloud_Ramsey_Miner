@@ -82,7 +82,7 @@ public class ControlBoard extends AppServer {
 		out += "<td><strong>Not Solved</strong></td>";
 		out += "</tr>\n";
 		
-		for(Graph g: bank.getGraphsGreaterThan(1)){
+		for(Graph g: bank.getGraphsGreaterThan(40)){
 			out += "<tr>";
 			out += "<td>"+g.getId()+"</td>";
 			out += "<td>"+g.getOriginId()+"</td>";

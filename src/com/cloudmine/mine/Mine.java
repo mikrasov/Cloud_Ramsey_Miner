@@ -22,7 +22,6 @@ public class Mine implements Runnable{
 	protected transient AppClient master;;
 	protected transient Gson gson = new Gson();
 	protected transient JsonParser jparse = new JsonParser();
-	protected transient Thread thread = new Thread(this);
 	protected transient int timeSinceLastPost = 0;
 	
 	protected  Miner[] miners;
@@ -82,8 +81,10 @@ public class Mine implements Runnable{
 		}
 	}
 
-	public void start(){
+	public Thread start(){
+		Thread thread = new Thread(this);
 		thread.start();
+		return thread;
 	}
 	
 	public Configuration getConfiguration(){
@@ -108,7 +109,10 @@ public class Mine implements Runnable{
 		System.out.println("Starting Mine (V."+config.getVersion()+")");
 		System.out.println(config);
 		
-		mine.start();
+		Thread mThread = mine.start();
+		try {
+			mThread.join();
+		} catch (InterruptedException e) {}
 		
 		System.out.println("---------------------------------\n");
 	}
