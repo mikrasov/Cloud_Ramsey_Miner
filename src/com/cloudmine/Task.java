@@ -12,6 +12,7 @@ public class Task {
 	private transient boolean failed = false;
 	private transient long lastSeen=0;
 	private transient long lastProgress=0;
+	private transient long startedOn = System.currentTimeMillis();
 	private transient Configuration targetMine;
 	
 	public Task(Configuration targetMine, UUID targetMiner, Graph seed) {
@@ -62,6 +63,11 @@ public class Task {
 		return lastSeen;
 	}
 	
+	public long startedOn(){
+		return startedOn;
+	}
+	
+	
 	public long timeSinceLastSeen(){
 		return System.currentTimeMillis() - lastSeen;
 	}
@@ -88,6 +94,6 @@ public class Task {
 
 	@Override
 	public String toString() {
-		return taskId +": "+ (seed==null?"":(taskId.toString()+" ("+seed.size()+") - ID:"+seed.getId()+" Origin:"+seed.getOriginId()));
+		return "Task "+taskId +" ["+ (seed==null?"":seed.toString())+"]";
 	}
 }

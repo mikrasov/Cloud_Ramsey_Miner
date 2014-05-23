@@ -44,7 +44,7 @@ public class Mine implements Runnable{
 		for(JsonElement t: jTasks){
 			Task task = gson.fromJson(t, Task.class);
 		
-			System.out.println("New Task "+task);
+			System.out.println("ASSIGNED "+task);
 			for(Miner m : miners)
 				m.assign(task);
 		}

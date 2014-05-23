@@ -89,20 +89,27 @@ public class Foreman extends AppServer {
 			
 			System.out.println("\t"+m);
 			
-			if(miner.hasTask()){
+			System.out.println("\tTask ID "+miner.getTask()+" "+miner.hasTask());
+			
+			if(miner.hasTask()){	
 				if(activeTasks.containsKey(miner.getTask())){
 					//Tracked task just seen
 					Task task = activeTasks.get(miner.getTask());
 					task.justSeen();
 					if(miner.failedToFindSolution()){
 						task.markFailed();		
+						
+						if(task.getSeed() != null)
+							task.getSeed().unassign();
 					}
+					System.out.println("Just seen");
 				}
 				else{
 					//Unknown task added
 					Task task = new Task(miner.getTask(), mineConfig, miner.getId());
 					task.justSeen();
 					activeTasks.put(task.getTaskId(), task);
+					System.out.println("Unkown task added");
 				}
 			}	
 			

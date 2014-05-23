@@ -25,18 +25,7 @@ public class Miner implements Runnable{
 		this.minUseful = minUseful;
 	}
 	
-	public void mine(Graph graph){
-		reset();
-		
-		//Wait until stopped
-		while(running) try {Thread.sleep(10);} catch (InterruptedException e) {}
-		
-		this.current = graph;
-		
-		(new Thread(this) ).start();
-	}
-	
-	public void reset(){
+	private void reset(){
 		failedToFindSolution = false;
 		running = false;
 		current = null;
@@ -47,13 +36,22 @@ public class Miner implements Runnable{
 	public void assign(Task task){
 		if(task != null && !this.id.equals(task.getTargetMiner())) return;
 		
+		reset();
+		
+		//if no task we are done!
 		if(task == null || task.getSeed() == null){
-			reset();
 			return;
 		}
+		
+		//Wait until stopped
+		while(running) try {Thread.sleep(10);} catch (InterruptedException e) {}
+		
+		//Setup new thread;
+		this.current = task.getSeed();
 		this.taskId = task.getTaskId();
 		
-		mine(task.getSeed());
+		//Start it up!
+		(new Thread(this) ).start();
 	}
 	
 	public Solution poll(){
@@ -64,9 +62,8 @@ public class Miner implements Runnable{
 		return id;
 	}
 	
-	protected void sendSolution(boolean isSolved){
-		Graph normalized = current.normalize();
-		normalized.setSolved(isSolved);
+	protected void sendSolution(Graph solvedGraph){
+		Graph normalized = solvedGraph.normalize();
 		
 		if(normalized.size()> minUseful)
 			solutionQueue.add(new Solution(taskId,normalized));

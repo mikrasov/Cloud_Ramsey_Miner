@@ -22,7 +22,7 @@ public class Configuration {
 	private static final Map<String, Configuration> configurations = new HashMap<>();
 	static{
 		//				  TYPE			Long	Cores	Interval					Foreman Address			Min						Max	
-		new Configuration("LOCAL_PC",	true,	2,		5*1000,						"http://localhost",		40,						99);
+		new Configuration("LOCAL_PC",	true,	1,		5*1000,						"http://localhost",		40,						99);
         new Configuration("LOCAL_MAC",	true,	2,		5*1000,						"http://localhost", 	40,						99);
         new Configuration("AWS",		true,	1,		LONG_REMORTING_INTERVAL,	FOREMAN_ADDRESS,		MIN_USEFULL_SOLUTION,	MAX_USEFULL_SOLUTION);
         new Configuration("AWS-LARGE",	true,	2,		LONG_REMORTING_INTERVAL,	FOREMAN_ADDRESS,		MIN_USEFULL_SOLUTION,	MAX_USEFULL_SOLUTION);

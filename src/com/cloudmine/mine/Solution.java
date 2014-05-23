@@ -13,6 +13,7 @@ public class Solution {
 		super();
 		this.taskId = taskId;
 		this.graph = graph;
+		this.graph.setSolved(true);
 	}
 	
 	public UUID getTaskId() {

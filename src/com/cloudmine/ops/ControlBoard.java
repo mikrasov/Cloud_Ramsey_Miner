@@ -82,7 +82,7 @@ public class ControlBoard extends AppServer {
 		out += "<td><strong>Not Solved</strong></td>";
 		out += "</tr>\n";
 		
-		for(Graph g: bank.getGraphsGreaterThan(40)){
+		for(Graph g: bank.getGraphsGreaterThan(1)){
 			out += "<tr>";
 			out += "<td>"+g.getId()+"</td>";
 			out += "<td>"+g.getOriginId()+"</td>";
@@ -103,12 +103,13 @@ public class ControlBoard extends AppServer {
 		out += "<tr>";
 		out += "<td><strong>Task ID</strong></td>";
 		out += "<td><strong>On Size</strong></td>";
-		out += "<td><strong>Last Progress</strong></td>";
-		out += "<td><strong>Failed</strong></td>";
 		out += "<td><strong>Type</strong></td>";
 		out += "<td><strong>Additional</strong></td>";
 		out += "<td><strong>Version</strong></td>";
+		out += "<td><strong>Started</strong></td>";
+		out += "<td><strong>Last Progress</strong></td>";
 		out += "<td><strong>Last Seen</strong></td>";
+		out += "<td><strong>Failed</strong></td>";
 		out += "</tr>";
 		
 		ArrayList<Task> sortedTasks = new ArrayList<Task>(tasks.values());
@@ -125,12 +126,13 @@ public class ControlBoard extends AppServer {
 			Configuration c = t.getTargetMine();
 			out += "<td>"+t.getTaskId()+":</td>";
 			out += "<td>"+t.currentSize()+"</td>";
-			out += "<td>"+ago(t.timeSinceLastProgress())+"</td>";
-			out += "<td>"+(t.hasFailed()?"X":"")+"</td>";
 			out += "<td>"+c.getType()+"</td>";
 			out += "<td>"+c.getAdditionalInfo()+"</td>";
 			out += "<td>"+c.getVersion()+"</td>";
+			out += "<td>"+ago(System.currentTimeMillis() - t.startedOn())+"</td>";
+			out += "<td>"+ago(t.timeSinceLastProgress())+"</td>";
 			out += "<td>"+ago(t.timeSinceLastSeen())+"</td>";
+			out += "<td>"+(t.hasFailed()?"X":"")+"</td>";
 			out += "</tr>\n";
 			n++;
 			if(n>100) break;

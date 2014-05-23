@@ -62,8 +62,8 @@ public class ForwardMiner extends Miner{
 				}
 			}
 	
-			if( true || best_count == Integer.MAX_VALUE) {
-				System.out.println("no best edge found");
+			if(best_count == Integer.MAX_VALUE) {
+				System.out.println("!! No best edge to remove");
 				return false;
 			}
 			
@@ -93,16 +93,18 @@ public class ForwardMiner extends Miner{
 	public void process() throws Exception {
 		boolean isSolved = false;
 		do{
-			
 			isSolved = findCounterExample(current);
 			
 			if(!isSolved){ 
 				failedToFindSolution = true;
-				throw new Exception("No solution found");
+				throw new Exception("No solution found for size "+current.size());
 			}
 			
+			//Send Solution
+			sendSolution(current);
+			
+			//Extend and keep solving
 			current = current.extendRandom();
-			sendSolution(isSolved);
 		}
 		while(current.size() <= maxUseful);
 	}
